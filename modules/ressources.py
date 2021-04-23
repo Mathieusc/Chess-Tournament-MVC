@@ -1,7 +1,10 @@
 import gc
 
 class Player:
-    def __init__(self, first_name, last_name, date_of_birth, gender, ranking):
+
+    LIST_OF_PLAYERS = []
+
+    def __init__(self, first_name, last_name, date_of_birth, gender, ranking, score=0):
         # first_name = Prénom, last_name = Nom
         self.first_name = first_name
         self.last_name = last_name
@@ -10,28 +13,37 @@ class Player:
 
         self.ranking = ranking # Séparer ranking de la classe ?
 
+        # Accessing the class attributes (not instance attribute)
+        self.LIST_OF_PLAYERS.append(self)
+
 class Ranking:
     # Doit être un entier positif
     def __init__(self, ranking):
         self.ranking = ranking
 
 class Tourney:
-    def __init__(self, name, location, date, turns):
+    def __init__(self, name, location, date, number_of_rounds):
         self.name = name
         self.location = location
         self.date = date
-        self.turns = turns
+        self.number_of_rounds = number_of_rounds
 
-    def list_of_players(self):
-        """This function will create an empty list and append to it all the instances of players with
-        their attributes created from the Player class."""
+    def build_first_round(player_1, player_2, score_1, score_2):
 
-        list_of_players = []
-        for obj in gc.get_objects():
-            if isinstance(obj, Player):
-                list_of_players.append(obj)
+        
+        round_history = {
+                        "Match 1": {player_1:score_1,
+                                    player_2:score_2},
+                        "Match 2": {player_1:score_1,
+                                    player_2:score_2},
+                        "Match 3": {player_1:score_1,
+                                    player_2:score_2},
+                        "Match 4": {player_1:score_1,
+                                    player_2:score_2}
+        }
 
-        return list_of_players
+        yield round_history
+
 
     def match_format(self):
         """
