@@ -27,7 +27,7 @@ def round_result():
 	draw_match = [0.5, 0.5]
 	match_variables = [win_match_1, win_match_2, draw_match]
 
-	return random.sample(match_variables, 1)
+	return random.sample(match_variables, 1)[0]
 
 def show_opponents(player_one, player_two):
 	"""doc"""

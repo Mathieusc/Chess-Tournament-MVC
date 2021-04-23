@@ -8,4 +8,4 @@ from modules.program_functions import (
 	show_ranking_by_scores,
 	show_opponents,
 	set_player_score,
-	round_result)
+	round_result,)
