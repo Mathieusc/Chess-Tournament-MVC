@@ -1,8 +1,9 @@
-import gc
+import modules
 
 class Player:
 
     LIST_OF_PLAYERS = []
+    ID = 0
 
     def __init__(self, first_name, last_name, date_of_birth, gender, ranking, score=0):
         # first_name = Prénom, last_name = Nom
@@ -10,16 +11,12 @@ class Player:
         self.last_name = last_name
         self.date_of_birth = date_of_birth # YEAR format
         self.gender = gender
-
-        self.ranking = ranking # Séparer ranking de la classe ?
-
+        self.ranking = ranking
+        type(self).ID += 1
+        self.ID = self.ID
         # Accessing the class attributes (not instance attribute)
         self.LIST_OF_PLAYERS.append(self)
 
-class Ranking:
-    # Doit être un entier positif
-    def __init__(self, ranking):
-        self.ranking = ranking
 
 class Tourney:
     def __init__(self, name, location, date, number_of_rounds):
@@ -27,22 +24,6 @@ class Tourney:
         self.location = location
         self.date = date
         self.number_of_rounds = number_of_rounds
-
-    def build_first_round(player_1, player_2, score_1, score_2):
-
-        
-        round_history = {
-                        "Match 1": {player_1:score_1,
-                                    player_2:score_2},
-                        "Match 2": {player_1:score_1,
-                                    player_2:score_2},
-                        "Match 3": {player_1:score_1,
-                                    player_2:score_2},
-                        "Match 4": {player_1:score_1,
-                                    player_2:score_2}
-        }
-
-        yield round_history
 
 
     def match_format(self):
@@ -57,53 +38,8 @@ class Tourney:
         # Remarques du directeur
         pass
 
-class Matchs:
-    def __init__(self, pair_of_players):
-        self.pair_of_players = pair_of_players
-
-    def score(self):
-        """
-        Gagnant = 1 point
-        Perdant = 0 point
-        Match nul = 1/2 point
-        """
-        pass
-
-    def single_match_result(self):
-        """Doit être stocké sous un tuple contenant 2 listes;
-        chacune contenant 2 éléments: une référence à une instance de joueur
-                                      un score
-        Les matchs multiples doivent être stockés sous forme de liste sur l'instance du tour.
-        """
-        pass
-
-    def multiple_match_result(self):
-        pass
-
-    def rounds(self):
-        """Une instance du tour doit contenir: un champ de nom 'Round 1'...
-                                               un champ Date et heure de début et de fin
-        tout deux automatiquement remplis lorsque l'utilisateur créer un tour et indique
-        qu'il est terminé.
-        Les instances de rounds doivent être stockées dans une liste
-        sur l'instance de tournoi à laquelle elles appartiennent.
-        """
-        pass
-
-class GeneratePairsOfPlayers:
-    """Système suisse, en gros, séparer en deux les joueurs et mettre le premier du tableau 1
-    contre le premier du tableau 2 (joueur 1 vs joueur 5, 2vs6, etc)."""
-    def __init__(self, player, ranking):
-        self.player = Player()
-        self.ranking = Ranking()
-
-    def assign_color(self):
-        """Blanc ou noir, équilibrage pas nécessaire mais en échec dans un tournois un joueur 
-        ne devrait pas jouer 2 fois la même couleur de suite dans un tournois."""
-        pass
-
 class Report:
-    """Doit afficher/lister les rapports suivants, pouvoix exporter ultérieurement (si possible).
+    """Doit afficher/lister les rapports suivants, pouvoir exporter ultérieurement (si possible).
     Réfléchir si fonction ou classe."""
     def __init__(self, actors, player, tourney, rounds, matchs):
         self.actors = actors
