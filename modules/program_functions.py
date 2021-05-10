@@ -68,15 +68,16 @@ def split_pairs_of_players(pairs_of_players):
 
 def build_next_round(ranking, players, pair_players, split_players):
 	""""""
+
 	next_round = {"Match 1": {},
 	              "Match 2": {},
 	              "Match 3": {},
 	              "Match 4": {}}
 
 	for i in range(4):
-	    pairs = split_players[i]
-	    round_result = modules.round_result()
-	    next_round[f"Match {i+1}"] = {pairs[0]: round_result[0],
-	     	                                pairs[1]: round_result[1]}
+		pairs = split_players[i]
+		round_result = modules.round_result()
+		next_round[f"Match {i+1}"] = {pairs[0]: round_result[0],
+	     	                          pairs[1]: round_result[1]}
 
 	return next_round
