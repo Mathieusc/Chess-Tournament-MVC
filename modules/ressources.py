@@ -3,7 +3,10 @@ import modules
 class Player:
 
     LIST_OF_PLAYERS = []
+<<<<<<< HEAD
     ID = 0
+=======
+>>>>>>> 717fc5dccd47faaadc5690535b33be3811137fc2
 
     def __init__(self, first_name, last_name, date_of_birth, gender, ranking, score=0):
         # first_name = Prénom, last_name = Nom
@@ -11,6 +14,18 @@ class Player:
         self.last_name = last_name
         self.date_of_birth = date_of_birth # YEAR format
         self.gender = gender
+<<<<<<< HEAD
+=======
+
+        self.ranking = ranking # Séparer ranking de la classe ?
+
+        # Accessing the class attributes (not instance attribute)
+        self.LIST_OF_PLAYERS.append(self)
+
+class Ranking:
+    # Doit être un entier positif
+    def __init__(self, ranking):
+>>>>>>> 717fc5dccd47faaadc5690535b33be3811137fc2
         self.ranking = ranking
         type(self).ID += 1
         self.ID = self.ID
@@ -24,7 +39,27 @@ class Tourney:
         self.location = location
         self.date = date
         self.number_of_rounds = number_of_rounds
+<<<<<<< HEAD
 
+=======
+
+    def build_first_round(player_1, player_2, score_1, score_2):
+
+        
+        round_history = {
+                        "Match 1": {player_1:score_1,
+                                    player_2:score_2},
+                        "Match 2": {player_1:score_1,
+                                    player_2:score_2},
+                        "Match 3": {player_1:score_1,
+                                    player_2:score_2},
+                        "Match 4": {player_1:score_1,
+                                    player_2:score_2}
+        }
+
+        yield round_history
+
+>>>>>>> 717fc5dccd47faaadc5690535b33be3811137fc2
 
     def match_format(self):
         """
