@@ -4,11 +4,12 @@ from controllers.base import Controller
 
 
 def main():
+    # view = View()
+    # controller = Controller(view)
     pass
 
 
 if __name__ == "__main__":
-    # view = View()
-    # controller = Controller(view)
+
     Controller.run()
 
