@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 from views.base import View
 from controllers.base import Controller

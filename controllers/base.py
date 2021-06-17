@@ -50,19 +50,18 @@ class Controller:
 
         return score_list
 
-    def create_tournament():
-        tournament = View.prompt_tournament()
-        
-
     def run():
         #Generates a tournament instance.
-        tournament = View.prompt_tournament()
+        #tournament = View.prompt_tournament()
 
-        # tournament = Tourney("Grand Chess Tour", "London", "June 06, 2021", 4)
-        # print(f"{tournament.name} \nLocation: {tournament.location}\nDate: {tournament.date}\nNumber of rounds: {tournament.number_of_rounds}\n")
+        tournament = Tourney("Grand Chess Tour", "London", "June 06, 2021", 4)
+        print(f"{tournament.name} \nLocation: {tournament.location}\nDate: {tournament.date}\nNumber of rounds: {tournament.number_of_rounds}\n")
 
         # Generate players.
         list_of_players = Player.generates_player(Player)
+        serialize_players = Player.serialize_player(list_of_players)
+        print(serialize_players)
+        #list_of_players = View.generate_player()
 
         # # Initialize the objects for every rounds.    
         # number_of_rounds = tournament.number_of_rounds

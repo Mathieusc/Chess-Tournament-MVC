@@ -1,5 +1,5 @@
 """Defines the players."""
-
+from tinydb import TinyDB
 
 class Player:
 
@@ -61,3 +61,22 @@ class Player:
         list_of_players = Player.LIST_OF_PLAYERS
 
         return list_of_players
+
+    def serialize_player(player):
+        db = TinyDB('db.json')
+        players_table = db.table('players')
+        players_table.truncate() # clear the table first
+        
+        serializerd_list = []
+        for players in player:
+            serializerd_player = {
+                'name': players.first_name,
+                'last_name': players.last_name,
+                'date_of_birth': players.date_of_birth,
+                'gender': players.gender,
+                'ranking': players.ranking
+            }
+            serializerd_list.append(serializerd_player)
+        players_table.insert_multiple(serializerd_list)
+
+        return serializerd_list
