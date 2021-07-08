@@ -1,5 +1,4 @@
-
-from views.base import View
+#from views.base import View
 from controllers.base import Controller
 
 
@@ -10,6 +9,5 @@ def main():
 
 
 if __name__ == "__main__":
-
+    # main()
     Controller.run()
-
