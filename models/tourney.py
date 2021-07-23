@@ -1,10 +1,13 @@
 """Defines a tournament."""
 import random
+
+from tinydb.table import Document
 from models.player import Player
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
+from tinydb.operations import delete
 
 class Tourney:
-    def __init__(self, name, location, date, number_of_rounds):
+    def __init__(self, name, location, date, number_of_rounds, current_round=0):
         self.name = name
         self.location = location
         self.date = date
@@ -26,9 +29,9 @@ class Tourney:
         # Tourney
         round_history = []
         round_1 = {"match_1": {},
-                "match_2": {},
-                "match_3": {},
-                "match_4": {}}
+                   "match_2": {},
+                   "match_3": {},
+                   "match_4": {}}
                     
         for x in range(rounds):
             next_round = round_1.copy()
@@ -51,9 +54,9 @@ class Tourney:
     def build_next_round(players, split_players):
         # Tourney
         next_round = {"match_1": {},
-                    "match_2": {},
-                    "match_3": {},
-                    "match_4": {}}
+                      "match_2": {},
+                      "match_3": {},
+                      "match_4": {}}
 
         for i in range(4):
             pairs = split_players[i]
@@ -93,9 +96,9 @@ class Tourney:
         """ """
         
         ranking = {**scores["match_1"],
-                **scores["match_2"],
-                **scores["match_3"],
-                **scores["match_4"]}
+                   **scores["match_2"],
+                   **scores["match_3"],
+                   **scores["match_4"]}
         #for key, value in scores.items():
             
         sort_matchs = sorted(ranking.items(), key=lambda item: item[1], reverse=True)
@@ -105,17 +108,26 @@ class Tourney:
     def serialize_round(round):
         db = TinyDB('db.json')
         rounds_table = db.table('rounds')
-        #rounds_table.truncate() # clear the table first
         for key, value in round.items():
             serializerd_round = {key: value}
             rounds_table.insert(serializerd_round)
+        return rounds_table
+
+    def update_round(round):
+        db = TinyDB('db.json')
+        rounds_table = db.table('rounds')
+        for key, value in round.items():
+            updated_round = {'match_':{key: value}}
+            rounds_table.update(updated_round)
 
         return rounds_table
 
     def serialize_tournament(tournament):
+        """"""
         db = TinyDB('db.json')
         tournament_table = db.table('tournament')
-        tournament_table.truncate()
+        #tournament_table.truncate()
+        #tourney_list = []
         serialize_tournament = {
             'name': tournament.name,
             'location': tournament.location,
@@ -123,9 +135,54 @@ class Tourney:
             'number_of_rounds': tournament.number_of_rounds,
             'current_round': tournament.current_round
             }
+        #tourney_list.append(serialize_tournament)
+        #tournament_table.insert({'tournament_data': tourney_list})
+
         tournament_table.insert(serialize_tournament)
+        return tournament_table
+
+    def update_tournament(tournament):
+        """"""
+        db = TinyDB('db.json')
+        tournament_table = db.table('tournament')
+        #tournament_table.truncate()
+        #tourney_list = []
+        serialize_tournament = {
+            'name': tournament.name,
+            'location': tournament.location,
+            'date': tournament.date,
+            'number_of_rounds': tournament.number_of_rounds,
+            'current_round': tournament.current_round,
+            'rounds': tournament.rounds
+            }
+        #tourney_list.append(serialize_tournament)
+        #tournament_table.insert({'tournament_data': tourney_list})
+
+        tournament_table.update(serialize_tournament)
+        return tournament_table
+
+    def update_rounds_table():
+
+        db = TinyDB('db.json')
+        tournament_table = db.table('tournament')
+        rounds_table = db.table('rounds')
+        tournament_table.insert({'rounds': rounds_table})
 
         return tournament_table
+
+    def deserialize_tournament(tournament_table):
+        """"""
+        for tournament_infos in tournament_table:
+            name = tournament_infos['name']
+            location = tournament_infos['location']
+            date = tournament_infos['date']
+            number_of_rounds = tournament_infos['number_of_rounds']
+            rounds = tournament_infos['rounds']
+            tournament = Tourney(name, location, date, number_of_rounds)
+            tournament.current_round = tournament_infos['current_round']
+            tournament.rounds = rounds
+
+        return tournament
 
     def check_previous_rounds():
         db = TinyDB('db.json')
@@ -135,10 +192,15 @@ class Tourney:
 
         return Round.all()
 
+    def get_previous_rounds():
+        db = TinyDB('db.json')
+        table = db.table('tournament')
+        rounds = table['rounds']
+        print(rounds)
+
     def get_tournament_data():
         db = TinyDB('db.json')
         tournament = db.table('tournament')
-
         return tournament.all()
 
     def get_previous_rounds_data(round_list, table, current_round, total_round):

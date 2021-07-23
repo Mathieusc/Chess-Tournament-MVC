@@ -3,11 +3,8 @@ from controllers.base import Controller
 
 
 def main():
-    # view = View()
-    # controller = Controller(view)
-    pass
+    Controller.run()
 
 
 if __name__ == "__main__":
-    # main()
-    Controller.run()
+    main()

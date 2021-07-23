@@ -1,6 +1,8 @@
 """Base view."""
 from models.tourney import Tourney
 from models.player import Player
+from models.datadb import Data
+from tinydb import TinyDB, Query
 import controllers.base as control
 
 class View:
@@ -39,36 +41,33 @@ class View:
         print("Tournament settings: ")
         print("[1] Start a new tournament.")
         print("[2] Load the previous tournament.")
+        print("[3] Report - Displays all data.")
         print("[0] Exit the program.")
 
         while True:
             menu = input("Choose your option: ")
             if menu == "1":
                 View.menu_start()
-
             elif menu == "2":
                 control.Controller.load_tournament()
+            elif menu == "3":
+                report = View.prompt_data()
             elif menu == "0":
                 exit()
             else:
                 print("Invalid input, please try again.")
 
     def menu_start():
-        print("\n-----------------------------------------------------------------------------------------")
-        print("Starting new tournament:")
+        for i in range(90):
+            print("-", end="")
+        print("\nStarting new tournament:")
         print("[1] Manually instanciate players and tournament data.")
         print("[2] Load players and tournament data.")
         while True:
             menu = input("Choose your option: ")
             if menu == "1":
                 tournament = View.prompt_tournament()
-                View.loading()
-                return tournament 
             if menu == "2":
-                # tournament = Tourney("Grand Chess Tour", "London", "June 06, 2021", 4)
-                # print(f"{tournament.name} \nLocation: {tournament.location}\nDate: {tournament.date}\nNumber of rounds: {tournament.number_of_rounds}\n")
-                # return tournament
-
                 control.Controller.start_tournament()
                 
 
@@ -87,7 +86,88 @@ class View:
                 print("Invalid input.")
             elif ask == "y".upper():
                 break
-            elif ask =="n".upper():
+            elif ask == "n".upper():
                 exit()
 
         return ask
+
+    def prompt_load_tourney(table):
+        while True:
+            print("\nData from the previous tournament:")
+            print(table)
+            ask = input("Load data ? [Y/N] ").upper()
+            if ask != "y".upper() and ask != "n".upper():
+                print("Invalid input.")
+            elif ask == "y".upper():
+                break
+            elif ask == "n".upper():
+                exit()
+
+    def prompt_tournament():
+        for i in range(90):
+            print("-", end="")
+        print("\nTournament settings:")
+        print("[1] Manually create tournament data.")
+        print("[2] Load the previous tournament.")
+        print("[3] Use the tournament data from file.")
+        while True:
+            menu = input("Choose your option: ")
+            if menu == "1":
+                pass
+            if menu == "2":
+                pass
+            if menu == "3":
+                pass
+
+    def prompt_players():
+        for i in range(90):
+            print("-", end="")
+        print("\Players settings: (if you selected Load tournament before, please use option 2 again)")
+        print("[1] Manually instanciate players.")
+        print("[2] Load players from the previous tournament.")
+        print("[3] Select players from the databse.")
+        while True:
+            menu = input("Choose your option: ")
+            if menu == "1":
+                pass
+            if menu == "2:":
+                pass
+            if menu == "3":
+                pass
+
+    def prompt_data():
+        table = TinyDB('db.json')
+        for i in range(90):
+            print("-", end="")
+        print("\nReport: ")
+        print("[1] Show all.")
+        print("[2] Display tournament.")
+        print("[3] Display players.")
+        print("[4] Display rounds.")
+        print("[5] Display matchs from Round 1")
+        print("[6] Display matchs from Round 2")
+        print("[7] Display matchs from Round 3")
+        print("[8] Display matchs from Round 4")
+        print("[0] Main menu.")
+        while True:
+            menu = input("Choose your option: ")
+            if menu == "1":
+                Data.display_tables(table)
+            if menu == "2":
+                Data.display_tournament(table)
+            if menu == "3":
+                Data.display_players(table)
+            if menu == "4":
+                Data.display_rounds(table)
+            if menu == "5":
+                Data.display_matchs_1(table)
+            if menu == "6":
+                Data.display_matchs_2(table)
+            if menu == "7":
+                Data.display_matchs_3(table)
+            if menu == "8":
+                Data.display_matchs_4(table)
+            if menu == "9":
+                Data.main_table(table)
+            if menu == "0":
+                View.start_program()

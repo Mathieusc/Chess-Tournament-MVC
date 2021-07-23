@@ -1,4 +1,5 @@
 """Gives methods for the display of the global ranking after each rounds."""
+from models.datadb import Data
 from models.player import Player
 from models.tourney import Tourney
 from views.base import View
@@ -56,8 +57,8 @@ class Controller:
 
     def start_tournament():
         #Generates a tournament instance.
-        tournament = tournament = Tourney("Grand Chess Tour", "London", "June 06, 2021", 2)
-        Tourney.current_round = 1
+        tournament = tournament = Tourney("Grand Chess Tour", "London", "November 06, 2021", 4)
+        tournament.current_round = 1
         print("Tournament: \n")
         print(tournament)
 
@@ -68,8 +69,8 @@ class Controller:
         ranks = Player.get_player_name_ranking(list_of_players)
         
         # Generate the objects for each rounds.
-        ROUNDS = Tourney.generate_round(tournament.number_of_rounds)
-        ROUNDS = Tourney.build_round(ROUNDS, list_of_players)
+        round_list = Tourney.generate_round(tournament.number_of_rounds)
+        ROUNDS = Tourney.build_round(round_list, list_of_players)
         Tourney.clear_round_table()
         number_of_rounds = tournament.number_of_rounds
         serialize_tournament = Tourney.serialize_tournament(tournament)
@@ -80,8 +81,8 @@ class Controller:
         for matchs in range(number_of_rounds):
             print()
             print(f"ROUNDS: \n{ROUNDS}")
-            print(f"\nRound {matchs+1}")
-            pprint(ROUNDS[matchs]) 
+            print(f"\nRound {tournament.current_round}")
+            print(ROUNDS[matchs]) 
             # round_result = Tourney.get_round_result(ROUNDS[matchs])
             # print("\nRound result:")
             # pprint(round_result)
@@ -98,44 +99,60 @@ class Controller:
             print(serialize_rounds)
             print(serialize_rounds.all())
             try:
-                ROUNDS[matchs+1] = Tourney.build_next_round(players, split_players)
+                tournament.current_round += 1
+                serialize_tournament.update({'rounds': serialize_rounds.all()})
                 View.ask_continue()
-                Tourney.current_round += 1
-                print(f"Current round: {Tourney.current_round}")
+                serialize_tournament.update({'current_round': tournament.current_round})
+                ROUNDS[matchs+1] = Tourney.build_next_round(players, split_players)
+                #serialize_tournament = Tourney.update_rounds_table()
+                print(f"Current round: {tournament.current_round}")
             except IndexError:
                 print("Tournament ended !")
                 exit()
 
     def load_tournament():
-        tournament = Tourney.get_tournament_data()
-        current_round = tournament[0]['current_round']
+        # Generates a tournament instance.
+        tournament_table = Tourney.get_tournament_data()
+        print(tournament_table)
+        for tourneys in tournament_table:
+            if tourneys['current_round'] == tourneys['number_of_rounds']:
+                print("\nThis tournament is done !\n")
+                View.start_program()
+
+        print("HELP ME")
+        for tourney in tournament_table:
+            print(tourney['rounds'])
+        save = tourney['rounds']
+
+        View.prompt_load_tourney(tournament_table)
+        tournament = Tourney.deserialize_tournament(tournament_table)
+        serialize_tournament = Tourney.update_tournament(tournament)
         print("Tournament: \n")
         print(tournament)
-        print(type)
-        #Generates a tournament instance.
-
-        
-        # Generate players.
+        current_round = tournament.current_round
+        number_of_rounds = tournament.number_of_rounds
+        rounds_left = number_of_rounds - current_round
+        # Players, NEEDS TO BE DONE WITH DB.JSON
         list_of_players = Player.generates_player(Player)
         serialize_players = Player.serialize_player(list_of_players)
         print(serialize_players)
 
-        # # Initialize the objects for every rounds.    
+        # Initialize the objects for every rounds.    
         ranks = Player.get_player_name_ranking(list_of_players)
 
-        save = Tourney.check_previous_rounds()
-        print("Previous rounds:\n")
-        pprint(save)
 
-        number_of_rounds = tournament[0]['number_of_rounds']
-        ROUNDS = Tourney.generate_round(number_of_rounds)
-        ROUNDS = Tourney.get_previous_rounds_data(ROUNDS, save, current_round, number_of_rounds)
+        # save = Tourney.check_previous_rounds()
+        # print("Previous rounds:\n")
+        # pprint(save)
 
-        for matchs in range(number_of_rounds):
-            print()
-            print(f"ROUNDS: \n{ROUNDS}")
-            print(f"\nRound {matchs+1}")
-            pprint(ROUNDS[matchs])
+        round_list = Tourney.generate_round(number_of_rounds)
+        print()
+        print(f"Round_list: {round_list}")
+        ROUNDS = Tourney.get_previous_rounds_data(round_list, save, current_round, number_of_rounds)
+        print()
+        print("ROUNDS ITEM:")
+        print(ROUNDS)
+        for matchs in range(rounds_left):
             sum_rounds = Controller.add_scores(ROUNDS)
             sorted_sum_rounds = Controller.sort_scores(sum_rounds)
             global_rank = Controller.display_global_ranking(ranks, sorted_sum_rounds)
@@ -145,16 +162,29 @@ class Controller:
             print("\nGlobal ranking:")
             pprint(global_rank)
             print()
-            serialize_rounds = Tourney.serialize_round(ROUNDS[matchs])
-            print(serialize_rounds)
-            print(serialize_rounds.all())
             try:
+                View.ask_continue()
                 ROUNDS[matchs+1] = Tourney.build_next_round(players, split_players)
-                if current_round == tournament[0]['number_of_rounds']:
-                    print("Tournament ended !")
-                    exit()
-                next_round = View.ask_continue()
-                current_round += 1
-                print(f"Current round: {current_round}")
+                serialize_rounds = Tourney.serialize_round(ROUNDS[matchs+1])
+                print(serialize_rounds)
+                print(serialize_rounds.all())
+                tournament.current_round += 1
+                # update_tourney = Tourney.update_tournament(tournament_table)
+                # update_tourney.update({'current_round': tournament.current_round})
+                # update_tourney.update({'rounds': serialize_rounds.all()})
+                serialize_tournament.update({'current_round': tournament.current_round})
+                print(f"Current round: {tournament.current_round}")
             except IndexError:
-                print("No more matchs to be found.")
+                print("Tournament ended !")
+                exit()
+        if tournament.current_round == tournament.number_of_rounds:
+            print("Tournament ended !")
+            exit()
+
+    def run_tournament():
+        tournament = View.prompt_tournament()
+        players = View.prompt_players()
+        # list_of_players =
+        # ranks =
+        # ROUNDS = 
+        pass

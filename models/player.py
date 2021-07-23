@@ -54,6 +54,7 @@ class Player:
         player_2 = Player("Yifan", "Hou", 1994, "Female", 2720)
         player_3 = Player("Ding ", "Liren", 1992, "Male", 2691)
         player_4 = Player("Aleksandra", "Goryachkina", 1998, "Female", 2589)
+        
         player_5 = Player("Levron", "Aronian", 1982, "Male", 2481)
         player_6 = Player("Koneru", "Humpy", 1987, "Female", 2377)
         player_8 = Player("Wenjun", "Ju", 1991, "Female", 2170)
@@ -63,17 +64,20 @@ class Player:
         return list_of_players
 
     def serialize_player(player):
+        players_list = []
         db = TinyDB('db.json')
         players_table = db.table('players')
         players_table.truncate() # clear the table first
         for players in player:
             serializerd_player = {
                 'name': players.first_name,
+                'player_id': players.ID,
                 'last_name': players.last_name,
                 'year_of_birth': players.year_of_birth,
                 'gender': players.gender,
                 'ranking': players.ranking
             }
+            players_list.append(serializerd_player)
             players_table.insert(serializerd_player)
 
         return players_table
