@@ -10,7 +10,7 @@ class View:
     def __init__(self):
         pass
 
-    def prompt_tournament():
+    def generate_tournament():
         tournament_name = input("Entrez le nom du tournois: ")
         Tourney.name = tournament_name
         tournament_location = input("Entrez le lieu du tournois: ")
@@ -47,9 +47,11 @@ class View:
         while True:
             menu = input("Choose your option: ")
             if menu == "1":
-                View.menu_start()
+                #View.menu_start()
+                control.Controller.setup_tournament()
             elif menu == "2":
-                control.Controller.load_tournament()
+                #control.Controller.load_tournament()
+                control.Controller.load_tournament_data()
             elif menu == "3":
                 report = View.prompt_data()
             elif menu == "0":
@@ -66,7 +68,7 @@ class View:
         while True:
             menu = input("Choose your option: ")
             if menu == "1":
-                tournament = View.prompt_tournament()
+                tournament = control.Controller.start_tournament()
             if menu == "2":
                 control.Controller.start_tournament()
                 
@@ -94,7 +96,7 @@ class View:
     def prompt_load_tourney(table):
         while True:
             print("\nData from the previous tournament:")
-            print(table)
+            #print(table)
             ask = input("Load data ? [Y/N] ").upper()
             if ask != "y".upper() and ask != "n".upper():
                 print("Invalid input.")
