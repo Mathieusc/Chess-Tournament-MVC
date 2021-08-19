@@ -1,4 +1,7 @@
-__pycache__/
-env/
 .vs/
 .vscode/
+env/
+db.json
+controllers/__pycache__
+models/__pycache__
+views/__pycache__
