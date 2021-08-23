@@ -41,7 +41,8 @@ class View:
         print("Tournament settings: ")
         print("[1] Start a new tournament.")
         print("[2] Load the previous tournament.")
-        print("[3] Report - Displays all data.")
+        print("[3] Update players ranking.")
+        print("[4] Report - Displays all data.")
         print("[0] Exit the program.")
 
         while True:
@@ -53,6 +54,8 @@ class View:
                 #control.Controller.load_tournament()
                 control.Controller.load_tournament_data()
             elif menu == "3":
+                control.Controller.load_ranking_data()
+            elif menu == "4":
                 report = View.prompt_data()
             elif menu == "0":
                 exit()
@@ -68,7 +71,8 @@ class View:
         while True:
             menu = input("Choose your option: ")
             if menu == "1":
-                tournament = control.Controller.start_tournament()
+                # Manual function needs to be done
+                control.Controller.start_tournament()
             if menu == "2":
                 control.Controller.start_tournament()
                 
@@ -83,7 +87,7 @@ class View:
 
     def ask_continue():
         while True:
-            ask = input("\nRound done, start the next round ? [Y/N] ").upper()
+            ask = input("\nStart the next round ? [Y/N] ").upper()
             if ask != "y".upper() and ask != "n".upper():
                 print("Invalid input.")
             elif ask == "y".upper():
@@ -92,6 +96,22 @@ class View:
                 exit()
 
         return ask
+
+    def prompt_ranking(players):
+        for i in range(len(players)):
+            update_rank = int(input(f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "))
+        
+        return update_rank
+
+    def ask_ranking_change(players, global_ranking, serialize_tournament):
+        while True:
+            ask = input("Tournament done, update player's ranking ? [Y/N] ").upper()
+            if ask != "y".upper() and ask != "n".upper():
+                print("Invalid input.")
+            elif ask == "y".upper():
+                Player.change_player_ranking(players, global_ranking, serialize_tournament)
+            elif ask == "n".upper():
+                exit()
 
     def prompt_load_tourney(table):
         while True:
@@ -154,7 +174,7 @@ class View:
         while True:
             menu = input("Choose your option: ")
             if menu == "1":
-                Data.display_tables(table)
+                Data.display_every_tournaments(table)
             if menu == "2":
                 Data.display_tournament(table)
             if menu == "3":

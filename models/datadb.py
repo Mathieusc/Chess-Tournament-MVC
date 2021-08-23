@@ -22,6 +22,24 @@ class Data:
         tournament = self.table('tournament')
         print(tournament.all())
 
+    def display_every_tournaments(self):
+        tournament = self.table('tournament')
+        every_tournament_data = tournament.all()
+        print("List of every tournament:")
+        for tourneys in every_tournament_data:
+            print(f"Name: {tourneys.get('name')}, Location: {tourneys.get('location')}, Date: {tourneys.get('data')}, Number of rounds: {tourneys.get('number_of_rounds')}")
+
+    def display_players_alphabetical(self):
+        tournament = self.table('tournament')
+        every_tournament_data = tournament.all()
+        every_players = []
+        for tourney in every_tournament_data:
+            every_players.append(tourney.get('players'))
+
+        # for players in every_players:
+        #     every_players.append(players.get('name'))
+        print(every_players)
+
     def display_players(self):
         players = self.table('players')
         print(players.all())

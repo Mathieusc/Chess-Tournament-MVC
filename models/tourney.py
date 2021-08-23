@@ -7,7 +7,7 @@ from tinydb import TinyDB
 from tinydb.operations import delete
 
 class Tourney:
-    def __init__(self, name, location, date, number_of_rounds, current_round=0):
+    def __init__(self, name, location, date, number_of_rounds):
         self.name = name
         self.location = location
         self.date = date
@@ -95,7 +95,7 @@ class Tourney:
         #for players in player:
         player_result = input((f"Enter the score from the following player:\n{player.ID}: {player.first_name}: "))
         
-        return int(player_result)
+        return float(player_result)
 
     def build_next_round(players, split_players):
         # Tourney
@@ -116,7 +116,7 @@ class Tourney:
         """Compared to first_round_result(), param= str('player_name'), not player object"""
         player_result = input((f"Enter the score from the following player:\n{player}: "))
             
-        return int(player_result)
+        return float(player_result)
 #-------------------------------------MANUAL SCORE INPUT-----------------------------------------------------------------------
     def get_round_result(self, scores):
         # Tourney
@@ -255,6 +255,8 @@ class Tourney:
         tournament = Tourney(name, location, date, number_of_rounds)
         tournament.current_round = tournament_data.get('current_round')
         tournament.rounds = rounds
+        players = tournament_data.get('players')
+        tournament.players = players
 
         return tournament
 
@@ -275,11 +277,6 @@ class Tourney:
     def get_tournament_data():
         db = TinyDB('db.json')
         tournament = db.table('tournament')
-        print("\nCHECKPOINT:")
-
-        # table = tournament.get(doc_id=len(tournament)-2)
-        # print(table)
-        # return table
 
         return tournament.all()
 

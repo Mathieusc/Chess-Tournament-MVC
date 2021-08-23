@@ -1,5 +1,6 @@
 """Defines the players."""
 from tinydb import TinyDB, Query
+import controllers.base as control
 
 class Player:
 
@@ -87,29 +88,53 @@ class Player:
         player_list = []
         for players in players_data:
             name = players.get('name')
-            print(name)
             last_name = players.get('last_name')
-            print(last_name)
             year_of_birth = players.get('year_of_birth')
-            print(year_of_birth)
             gender = players.get('gender')
             ranking = players.get('ranking')
-            print(ranking)
             ID = players.get('player_id')
-            print(ID)
             player_ = Player(name, last_name, year_of_birth, gender, ranking, ID)
             player_list.append(player_)
-        print("Player 1 and 8 + ID + ranking:")
-        print(player_list[0].first_name, player_list[0].ID, player_list[0].ranking, player_list[0].last_name)
-        print(player_list[7].first_name, player_list[7].ID, player_list[7].ranking, player_list[7].last_name)
+
         return player_list
 
     def get_player_data():
         db = TinyDB('db.json')
         players = db.table('players')
-        print("\nCHECKPOINT:")
-
-        # return table
-
 
         return players.all()
+
+    def convert_to_dict(players):
+        player_list = []
+        playerz= {}
+        for player in players:
+            playerz = {
+                'name': player.first_name,
+                'last_name': player.last_name,
+                'year_of_birth': player.year_of_birth,
+                'gender': player.gender,
+                'ranking': player.ranking,
+                'player_id': player.ID
+            }
+            player_list.append(playerz)
+
+        return player_list
+    
+    @staticmethod
+    def change_player_ranking(players, ROUNDS, serialize_tournament):
+        """"""
+        
+        player_ranks = Player.get_player_name_ranking(players)
+        get_round_result = control.Controller.add_scores(ROUNDS)
+        sorted_round_result = control.Controller.sort_scores(get_round_result)
+        global_ranking = control.Controller.display_global_ranking(player_ranks, sorted_round_result)
+        print("Global ranking from the tournament:")
+        for scores in enumerate(global_ranking, 1):
+            print(scores)
+        for i in range(len(players)):
+            update_rank = float(input(f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "))
+            players[i].ranking += update_rank
+            print(f"New player's rank -> {players[i].ranking}")
+        convert = Player.convert_to_dict(players)
+        serialize_tournament.update({'players': convert}, doc_ids=[len(serialize_tournament)])
+        exit()
