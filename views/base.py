@@ -1,16 +1,18 @@
 """Base view."""
+
 from models.tourney import Tourney
 from models.player import Player
 from models.datadb import Data
 from tinydb import TinyDB, Query
 import controllers.base as control
+import pprint
+#import string
 
 class View:
     """Chess tournament view."""
-    def __init__(self):
-        pass
 
     def generate_tournament():
+        # Peut mettre dans Tourney
         tournament_name = input("Entrez le nom du tournois: ")
         Tourney.name = tournament_name
         tournament_location = input("Entrez le lieu du tournois: ")
@@ -22,15 +24,18 @@ class View:
         tournament = Tourney(tournament_name, tournament_location, tournament_date, tournament_rounds)
         return tournament
 
-    def generate_player():
+    def add_players_info():
+        # Renvoie list de joueurs que le controlleur mets dans la DB
+
         players = []
-        player_1_name = input("Entrez le prénom du joueur 1: ")
-        player_1_last_name = input(f"Entrez le nom de {player_1_name}: ")
-        player_1_dob = int(input(f"Entrez l'année de naissance de {player_1_name}: "))
-        player_1_genre = input(f"Quel est le genre de {player_1_name} (ex: Homme/Femme) ? ")
-        player_1_rank = int(input(f"Entrez le classement de {player_1_name}: "))
-        player_1 = Player(player_1_name, player_1_last_name, player_1_dob, player_1_genre, player_1_rank)
-        players.append(player_1)
+        player_first_name = str(input("Enter the player's first name: "))
+        player_last_name = input(f"Enter {player_first_name}'s last name': ")
+        player_dob = int(input(f"Enter {player_first_name}'s year of birth (ex: 1992)': "))
+        player_genre = input(f"Enter {player_first_name}'s' genre [Male/Female/Other] ? ")
+        player_rank = int(input(f"Enter {player_first_name}'s ranking: "))
+        player_id = int(input(f"Enter {player_first_name}'s ID: "))
+        player = Player(player_first_name, player_last_name, player_dob, player_genre, player_rank, player_id)
+        players.append(player)
 
         return players
 
@@ -43,24 +48,12 @@ class View:
         print("[2] Load the previous tournament.")
         print("[3] Update players ranking.")
         print("[4] Report - Displays all data.")
+        print("[5] Add players to Database")
         print("[0] Exit the program.")
 
-        while True:
-            menu = input("Choose your option: ")
-            if menu == "1":
-                #View.menu_start()
-                control.Controller.setup_tournament()
-            elif menu == "2":
-                #control.Controller.load_tournament()
-                control.Controller.load_tournament_data()
-            elif menu == "3":
-                control.Controller.load_ranking_data()
-            elif menu == "4":
-                report = View.prompt_data()
-            elif menu == "0":
-                exit()
-            else:
-                print("Invalid input, please try again.")
+        menu = input("Choose your option: ")
+        return menu
+
 
     def menu_start():
         for i in range(90):
@@ -76,15 +69,6 @@ class View:
             if menu == "2":
                 control.Controller.start_tournament()
                 
-
-    def start():
-        start_tournament = True
-        return start_tournament
-
-    def load():
-        load_tournament = True
-        return load_tournament
-
     def ask_continue():
         while True:
             ask = input("\nStart the next round ? [Y/N] ").upper()
@@ -102,16 +86,6 @@ class View:
             update_rank = int(input(f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "))
         
         return update_rank
-
-    def ask_ranking_change(players, global_ranking, serialize_tournament):
-        while True:
-            ask = input("Tournament done, update player's ranking ? [Y/N] ").upper()
-            if ask != "y".upper() and ask != "n".upper():
-                print("Invalid input.")
-            elif ask == "y".upper():
-                Player.change_player_ranking(players, global_ranking, serialize_tournament)
-            elif ask == "n".upper():
-                exit()
 
     def prompt_load_tourney(table):
         while True:
@@ -144,7 +118,7 @@ class View:
     def prompt_players():
         for i in range(90):
             print("-", end="")
-        print("\Players settings: (if you selected Load tournament before, please use option 2 again)")
+        print("\nPlayers settings: (if you selected Load tournament before, please use option 2 again)")
         print("[1] Manually instanciate players.")
         print("[2] Load players from the previous tournament.")
         print("[3] Select players from the databse.")
@@ -158,38 +132,40 @@ class View:
                 pass
 
     def prompt_data():
-        table = TinyDB('db.json')
+
         for i in range(90):
             print("-", end="")
         print("\nReport: ")
-        print("[1] Show all.")
-        print("[2] Display tournament.")
-        print("[3] Display players.")
-        print("[4] Display rounds.")
-        print("[5] Display matchs from Round 1")
+        print("[1] Display all players by ranking")
+        print("[2] Display all players in alphabetical order.")
+        print("[3] Display every tournaments.")
+        print("[4] Display players from tournaments (ranking).")
+        print("[5] Display players from tournaments (alphabetical")
         print("[6] Display matchs from Round 2")
         print("[7] Display matchs from Round 3")
         print("[8] Display matchs from Round 4")
-        print("[0] Main menu.")
-        while True:
-            menu = input("Choose your option: ")
-            if menu == "1":
-                Data.display_every_tournaments(table)
-            if menu == "2":
-                Data.display_tournament(table)
-            if menu == "3":
-                Data.display_players(table)
-            if menu == "4":
-                Data.display_rounds(table)
-            if menu == "5":
-                Data.display_matchs_1(table)
-            if menu == "6":
-                Data.display_matchs_2(table)
-            if menu == "7":
-                Data.display_matchs_3(table)
-            if menu == "8":
-                Data.display_matchs_4(table)
-            if menu == "9":
-                Data.main_table(table)
-            if menu == "0":
-                View.start_program()
+        print("[0] Exit the program.")
+        menu = input("Choose your option: ")
+
+        return menu
+
+    def display_all_players(players):
+        print("\nList of every players competing:")
+        for player in players:
+            print(f"{players.index(player)+1}: {player.get('last_name')} {player.get('name')} - ID: {player.get('player_id')} - Rank: {player.get('ranking')}")
+
+    def display_all_tournaments(tournaments):
+        print("\nList of every tournaments:")
+        for tourneys in tournaments:
+            print(f"{tournaments.index(tourneys)+1}: {tourneys.get('name')} - {tourneys.get('location')} - {tourneys.get('date')} - Rounds: {tourneys.get('current_round')}")
+
+    def display_players_by_tournaments(tournaments):
+        # print("\nList of every players by tournaments:")
+        # display = [(player.get('name'), player.get('ranking')) for player in players[0]]
+        # for tourneys in tournaments:
+        #     print(f"{tournaments.index(tourneys)+1}: {tourneys.get('name')} - {tourneys.get('location')} - {tourneys.get('date')} - Rounds: {tourneys.get('current_round')} ,\
+        #         ")
+        #     print(display)
+        print(repr(tournaments))
+        for tourneys in tournaments:
+            print(f"{tourneys.get('name')} - {tourneys.get('players')}")

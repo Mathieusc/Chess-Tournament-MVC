@@ -1,12 +1,10 @@
 """Defines the players."""
-from tinydb import TinyDB, Query
-import controllers.base as control
+from tinydb import TinyDB
+from models.datadb import db
 
 class Player:
 
     LIST_OF_PLAYERS = []
-    # ID = 0
-    players_created = 0
 
     def __init__(self, first_name, last_name, year_of_birth, gender, ranking, ID):
         # first_name = Prénom, last_name = Nom
@@ -16,11 +14,23 @@ class Player:
         self.gender = gender
         self.ranking = ranking
         self.ID = ID
-        # type(self).ID += 1
-        # self.ID = self.ID
-        # Accessing the class attributes (not instance attribute)
         self.LIST_OF_PLAYERS.append(self)
-        Player.players_created += 1
+
+    def add_players_to_data(player):
+        players_list = []
+        players_table = db.table('all_players')
+        #players_table.truncate() # clear the table first
+        for players in player:
+            serializerd_player = {
+                'name': players.first_name,
+                'last_name': players.last_name,
+                'year_of_birth': players.year_of_birth,
+                'gender': players.gender,
+                'ranking': players.ranking,
+                'player_id': players.ID,
+            }
+            players_list.append(serializerd_player)
+            players_table.insert(serializerd_player)
 
     def get_players_from_ranking(ranking):
         # Player
@@ -64,10 +74,9 @@ class Player:
 
         return list_of_players
 
-    def serialize_player(player):
+    def serialize_players(player):
         players_list = []
-        db = TinyDB('db.json')
-        players_table = db.table('players')
+        players_table = db.table('all_players')
         players_table.truncate() # clear the table first
         for players in player:
             serializerd_player = {
@@ -80,8 +89,6 @@ class Player:
             }
             players_list.append(serializerd_player)
             players_table.insert(serializerd_player)
-
-        return players_table
 
     def deserialize_players(players_data):
         """"""
@@ -99,7 +106,6 @@ class Player:
         return player_list
 
     def get_player_data():
-        db = TinyDB('db.json')
         players = db.table('players')
 
         return players.all()
@@ -120,21 +126,4 @@ class Player:
 
         return player_list
     
-    @staticmethod
-    def change_player_ranking(players, ROUNDS, serialize_tournament):
-        """"""
-        
-        player_ranks = Player.get_player_name_ranking(players)
-        get_round_result = control.Controller.add_scores(ROUNDS)
-        sorted_round_result = control.Controller.sort_scores(get_round_result)
-        global_ranking = control.Controller.display_global_ranking(player_ranks, sorted_round_result)
-        print("Global ranking from the tournament:")
-        for scores in enumerate(global_ranking, 1):
-            print(scores)
-        for i in range(len(players)):
-            update_rank = float(input(f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "))
-            players[i].ranking += update_rank
-            print(f"New player's rank -> {players[i].ranking}")
-        convert = Player.convert_to_dict(players)
-        serialize_tournament.update({'players': convert}, doc_ids=[len(serialize_tournament)])
-        exit()
+
