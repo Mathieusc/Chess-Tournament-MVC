@@ -26,6 +26,8 @@ class Controller:
                 list_players = View.add_players_info()
                 Player.add_players_to_data(list_players)
                 Controller.run()
+            elif main_menu == "0":
+                exit()
             else:
                 print("Invalid input, please try again.")
                 Controller.run()
