@@ -23,7 +23,7 @@ class Tourney:
         # Remarques du directeur
         pass
 
-    def generate_round(rounds):
+    def generate_round(self, rounds):
         # Tourney
         round_history = []
         round_1 = {"match_1": {},
@@ -37,7 +37,7 @@ class Tourney:
 
         return round_history
 
-    def add_scores(scores):
+    def add_scores(self, scores):
         """param: list of dict (match results + empty matchs)
         return: only one dict with results-> player: score"""
         score_list = {}
@@ -52,7 +52,7 @@ class Tourney:
 
         return score_list
 
-    def sort_scores(scores):
+    def sort_scores(self, scores):
         """param: list of dict player: result
         return: list of tuples (player, result) sorted by scores"""
 
@@ -60,7 +60,7 @@ class Tourney:
 
         return global_ranking
 
-    def display_global_ranking(rank_list, score_list):
+    def display_global_ranking(self, rank_list, score_list):
         # Tourney
         rank_list = dict(rank_list)
         score_list = dict(score_list)
@@ -78,67 +78,25 @@ class Tourney:
 
         return score_list
 
-    # def build_first_round(players_list, rounds_list):
-    #     # Tourney
-    #     players = sorted(players_list, key=lambda player: player.ranking, reverse=True)
-    #     first_half = players[0:4]
-    #     second_half = players[4:8]
-    #     result = Tourney.round_result()
-    #     for i in range(4):
-    #         rounds_list[0][f"match_{i+1}"] = {first_half[i].first_name: result[0], 
-    #                                          second_half[i].first_name: result[1]}
+    def build_first_round(self, rounds, players_list):
 
-    #     return rounds_list
-#-----------------------------------------------------------------------
-    # def build_next_round(players, split_players):
-    #     # Tourney
-    #     next_round = {"match_1": {},
-    #                   "match_2": {},
-    #                   "match_3": {},
-    #                   "match_4": {}}
-
-    #     for i in range(4):
-    #         pairs = split_players[i]
-    #         round_results = Tourney.round_result()
-    #         next_round[f"match_{i+1}"] = {pairs[0]: round_results[0],
-    #                                      pairs[1]: round_results[1]}
-
-    #     return next_round
-#-----------------------------------------------------------------------
-    # def round_result():
-    #     # Tourney
-    #     """Returns a list containing the scores (integer) from the player's match.
-
-    #     USING RANDOM BUT NEEDS TO BE AN INPUT FROM THE USER LATER
-    #     """
-
-    #     win_match_1 = [1, 0]
-    #     win_match_2 = [0, 1]
-    #     draw_match = [0.5, 0.5]
-    #     match_variables = [win_match_1, win_match_2, draw_match]
-
-    #     return random.sample(match_variables, 1)[0]
-#--------------I AM HERE MANUAL SCORE INPUT-----------------------------------------------------------------
-    def build_first_round(rounds, players_list):
         players = sorted(players_list, key=lambda player: player.ranking, reverse=True)
         first_half = players[0:4]
         second_half = players[4:8]
         for i in range(4):
-            print(f"Player {first_half[i].ID} VS Player {second_half[i].ID}")
-            rounds[0][f"match_{i+1}"] = {first_half[i].first_name: Tourney.first_round_result(first_half[i]),
-                                        second_half[i].first_name: Tourney.first_round_result(second_half[i])}
+            rounds[0][f"match_{i+1}"] = {first_half[i].first_name: self.first_round_result(first_half[i]),
+                                        second_half[i].first_name: self.first_round_result(second_half[i])}
 
         return rounds
 
-    def first_round_result(player):
+    def first_round_result(self, player):
         """"""
-        #for players in player:
         player_result = input((f"Enter the score from the following player:\n{player.ID}: {player.first_name}: "))
         
         return float(player_result)
 
-    def build_next_round(players, split_players):
-        # Tourney
+    def build_next_round(self, split_players):
+
         next_round = {"match_1": {},
                       "match_2": {},
                       "match_3": {},
@@ -147,12 +105,12 @@ class Tourney:
         for i in range(4):
             pairs = split_players[i]
             print(f"{pairs[0]} VS {pairs[1]}")
-            next_round[f"match_{i+1}"] = {pairs[0]: Tourney.next_round_result(pairs[0]),
-                                         pairs[1]: Tourney.next_round_result(pairs[1])}
+            next_round[f"match_{i+1}"] = {pairs[0]: self.next_round_result(pairs[0]),
+                                         pairs[1]: self.next_round_result(pairs[1])}
 
         return next_round
 
-    def next_round_result(player):
+    def next_round_result(self, player):
         """Compared to first_round_result(), param= str('player_name'), not player object"""
         player_result = input((f"Enter the score from the following player:\n{player}: "))
             
@@ -161,24 +119,22 @@ class Tourney:
     def get_round_result(self, scores):
         # Tourney
         """ """
-        
+
         ranking = {**scores["match_1"],
                    **scores["match_2"],
                    **scores["match_3"],
                    **scores["match_4"]}
-        #for key, value in scores.items():
-            
         sort_matchs = sorted(ranking.items(), key=lambda item: item[1], reverse=True)
 
         return sort_matchs
 
-    def change_player_ranking(players, ROUNDS, serialize_tournament):
+    def change_player_ranking(self, players, ROUNDS, serialize_tournament):
         """"""
 
         player_ranks = Player.get_player_name_ranking(players)
-        get_round_result = Tourney.add_scores(ROUNDS)
-        sorted_round_result = Tourney.sort_scores(get_round_result)
-        global_ranking = Tourney.display_global_ranking(player_ranks, sorted_round_result)
+        get_round_result = self.add_scores(ROUNDS)
+        sorted_round_result = self.sort_scores(get_round_result)
+        global_ranking = self.display_global_ranking(player_ranks, sorted_round_result)
         print("Global ranking from the last tournament:")
         for scores in enumerate(global_ranking, 1):
             print(scores)
@@ -188,24 +144,10 @@ class Tourney:
             print(f"New player's rank -> {players[i].ranking}")
         convert = Player.convert_to_dict(players)
         serialize_tournament.update({'players': convert}, doc_ids=[len(serialize_tournament)])
+        
         exit()
 
-    def serialize_round(ronde):
-        rounds_table = db.table('Rounds')
-        for key, value in ronde.items():
-            serializerd_round = {key: value}
-            rounds_table.insert(serializerd_round)
-        return rounds_table
-
-    def update_round(round):
-        rounds_table = db.table('Rounds')
-        for key, value in round.items():
-            updated_round = {'match_':{key: value}}
-            rounds_table.update(updated_round)
-
-        return rounds_table
-
-    def serialize_tournament(tournament):
+    def serialize_tournament(self, tournament):
         """"""
         tournament_table = db.table('tournament')
         serialize_tournament = {
@@ -219,24 +161,14 @@ class Tourney:
 
         return tournament_table
 
-    def get_tournament_table():
+    def get_tournament_table(self):
         tournament_table = db.table('tournament')
 
         return tournament_table
 
-    def serialize_current_round(current_round):
-        round_number_table = db.table('round_number')
-        serialize_round_number = {
-            'rnd_number': current_round
-        }
-        round_number_table.insert(serialize_round_number)
-        return round_number_table
-
     def update_tournament(tournament):
         """"""
         tournament_table = db.table('tournament')
-        #tournament_table.truncate()
-        #tourney_list = []
         serialize_tournament = {
             'name': tournament.name,
             'location': tournament.location,
@@ -245,8 +177,6 @@ class Tourney:
             'current_round': tournament.current_round,
             'rounds': tournament.rounds
             }
-        #tourney_list.append(serialize_tournament)
-        #tournament_table.insert({'tournament_data': tourney_list})
 
         tournament_table.update(serialize_tournament)
         return tournament_table
@@ -258,34 +188,6 @@ class Tourney:
         tournament_table.insert({'rounds': rounds_table})
 
         return tournament_table
-
-    # def deserialize_tournament(tournament_table):
-    #     """"""
-    #     for tournament_infos in tournament_table:
-    #         name = tournament_infos['name']
-    #         location = tournament_infos['location']
-    #         date = tournament_infos['date']
-    #         number_of_rounds = tournament_infos['number_of_rounds']
-    #         rounds = tournament_infos['rounds']
-    #         tournament = Tourney(name, location, date, number_of_rounds)
-    #         tournament.current_round = tournament_infos['current_round']
-    #         tournament.rounds = rounds
-
-    #     return tournament
-
-    # def deserialize_tournament(tournament_table):
-    #     """"""
-
-    #     name = tournament_table.get('name')
-    #     location = tournament_table.get('location')
-    #     date = tournament_table.get('date')
-    #     number_of_rounds = tournament_table.get('number_of_rounds')
-    #     rounds = tournament_table.get('rounds')
-    #     tournament = Tourney(name, location, date, number_of_rounds)
-    #     tournament.current_round = tournament_table.get('current_round')
-    #     tournament.rounds = rounds
-
-    #     return tournament
 
     def deserialize_tournament(tournament_data):
         """"""
@@ -333,14 +235,10 @@ class Tourney:
         return rnd
 
     def get_previous_rounds_data(round_list, table, current_round, total_round):
-        # print("TABLE")
-        # print(table)
-        # print(type(table))
-        # print(len(table))
+
         round_left = total_round - current_round
         for i in range(round_left):
             table.append(round_list[0])
-            # print(round_list[0])
 
         return table
 

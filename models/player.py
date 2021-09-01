@@ -16,6 +16,19 @@ class Player:
         self.ID = ID
         self.LIST_OF_PLAYERS.append(self)
 
+    def generates_player(self):
+        player_1 = Player("Magnus", "Carlsen", 1990, "Male", 2847, 1)
+        player_2 = Player("Yifan", "Hou", 1994, "Female", 2720, 2)
+        player_3 = Player("Ding ", "Liren", 1992, "Male", 2691, 3)
+        player_4 = Player("Aleksandra", "Goryachkina", 1998, "Female", 2589, 4)
+        player_5 = Player("Levron", "Aronian", 1982, "Male", 2481, 5)
+        player_6 = Player("Koneru", "Humpy", 1987, "Female", 2377, 6)
+        player_7 = Player("Anish", "Giri", 1994, "Male", 2276, 7)
+        player_8 = Player("Wenjun", "Ju", 1991, "Female", 2170, 8)
+        list_of_players = Player.LIST_OF_PLAYERS
+
+        return list_of_players
+
     def add_players_to_data(player):
         players_list = []
         players_table = db.table('all_players')
@@ -32,22 +45,22 @@ class Player:
             players_list.append(serializerd_player)
             players_table.insert(serializerd_player)
 
-    def get_players_from_ranking(ranking):
-        # Player
-        """"""
-
-        return [players[0] for players in ranking]
-
     def sort_players_by_ranking(players):
         # Tourney
         """"""
 
         return sorted(players, key=lambda player: player.ranking, reverse=True)
 
+    def get_players_from_ranking(ranking):
+        # Player
+        """"""
+
+        return [players[0] for players in ranking]
+
     def create_pairs_of_players(players):
         # Tourney
     
-        return [players[i]+"_"+ players[i+1] for i in range(0, len(players), 2)]
+        return [players[i] +"_"+ players[i+1] for i in range(0, len(players), 2)]
 
     def split_pairs_of_players(pairs_of_players):
         # Tourney
@@ -60,19 +73,6 @@ class Player:
             sorted_dict[players.first_name] = players.ranking
 
         return sorted(sorted_dict.items(), key=lambda item: item[1], reverse=True)
-
-    def generates_player(Player):
-        player_1 = Player("Magnus", "Carlsen", 1990, "Male", 2847, 1)
-        player_2 = Player("Yifan", "Hou", 1994, "Female", 2720, 2)
-        player_3 = Player("Ding ", "Liren", 1992, "Male", 2691, 3)
-        player_4 = Player("Aleksandra", "Goryachkina", 1998, "Female", 2589, 4)
-        player_5 = Player("Levron", "Aronian", 1982, "Male", 2481, 5)
-        player_6 = Player("Koneru", "Humpy", 1987, "Female", 2377, 6)
-        player_7 = Player("Anish", "Giri", 1994, "Male", 2276, 7)
-        player_8 = Player("Wenjun", "Ju", 1991, "Female", 2170, 8)
-        list_of_players = Player.LIST_OF_PLAYERS
-
-        return list_of_players
 
     def serialize_players(player):
         players_list = []

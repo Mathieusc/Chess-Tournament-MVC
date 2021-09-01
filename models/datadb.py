@@ -12,17 +12,17 @@ class Data:
 
     def get_all_players(self):
         # Returns the table with all participants
-        player_table = self.table('all_players')
+        player_table = db.table('all_players')
 
         return player_table.all()
 
     def get_tournament(self):
-        tournaments = self.table('tournament')
+        tournaments = db.table('tournament')
 
         return tournaments.all()
     
     def get_tournaments_players(self):
-        tournaments = self.table('tournament')
+        tournaments = db.table('tournament')
         tournament = tournaments.all()
         players = []
         for player in tournament:

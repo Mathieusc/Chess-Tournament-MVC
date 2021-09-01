@@ -39,23 +39,23 @@ class View:
 
         return players
 
-    def start_program():
+    def start_program(self):
         print("*******************************************************************************************")
         print("#                                 WELCOME TO CHESS MANAGER                                #")
         print("*******************************************************************************************\n")
         print("Tournament settings: ")
-        print("[1] Start a new tournament.")
-        print("[2] Load the previous tournament.")
+        print("[1] Start tournament.")
+        print("[2] Load tournament.")
         print("[3] Update players ranking.")
-        print("[4] Report - Displays all data.")
-        print("[5] Add players to Database")
-        print("[0] Exit the program.")
+        print("[4] Add players to Database")
+        print("[5] Report menu.")
+        print("[0] Main menu.")
 
         menu = input("Choose your option: ")
         return menu
 
 
-    def menu_start():
+    def menu_start(self):
         for i in range(90):
             print("-", end="")
         print("\nStarting new tournament:")
@@ -69,7 +69,7 @@ class View:
             if menu == "2":
                 control.Controller.start_tournament()
                 
-    def ask_continue():
+    def ask_continue(self):
         while True:
             ask = input("\nStart the next round ? [Y/N] ").upper()
             if ask != "y".upper() and ask != "n".upper():
@@ -99,7 +99,7 @@ class View:
             elif ask == "n".upper():
                 exit()
 
-    def prompt_tournament():
+    def prompt_tournament(self):
         for i in range(90):
             print("-", end="")
         print("\nTournament settings:")
@@ -115,7 +115,7 @@ class View:
             if menu == "3":
                 pass
 
-    def prompt_players():
+    def prompt_players(self):
         for i in range(90):
             print("-", end="")
         print("\nPlayers settings: (if you selected Load tournament before, please use option 2 again)")
@@ -131,7 +131,7 @@ class View:
             if menu == "3":
                 pass
 
-    def prompt_data():
+    def prompt_data(self):
 
         for i in range(90):
             print("-", end="")
@@ -149,17 +149,18 @@ class View:
 
         return menu
 
-    def display_all_players(players):
+    def display_all_players(self, players):
         print("\nList of every players competing:")
         for player in players:
             print(f"{players.index(player)+1}: {player.get('last_name')} {player.get('name')} - ID: {player.get('player_id')} - Rank: {player.get('ranking')}")
 
-    def display_all_tournaments(tournaments):
+    def display_all_tournaments(self, tournaments):
         print("\nList of every tournaments:")
+        # Utiliser l'ID de la table
         for tourneys in tournaments:
             print(f"{tournaments.index(tourneys)+1}: {tourneys.get('name')} - {tourneys.get('location')} - {tourneys.get('date')} - Rounds: {tourneys.get('current_round')}")
 
-    def display_players_by_tournaments(tournaments):
+    def display_players_by_tournaments(self, tournaments):
         # print("\nList of every players by tournaments:")
         # display = [(player.get('name'), player.get('ranking')) for player in players[0]]
         # for tourneys in tournaments:
@@ -168,4 +169,8 @@ class View:
         #     print(display)
         print(repr(tournaments))
         for tourneys in tournaments:
-            print(f"{tourneys.get('name')} - {tourneys.get('players')}")
+            print("=================================================\n")
+            print(f"{tourneys.get('name')}")
+            for player in tourneys['players']:
+                print(player['name'])
+            print("=================================================\n")

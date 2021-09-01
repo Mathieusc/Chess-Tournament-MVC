@@ -1,8 +1,11 @@
+from views.base import View
 from controllers.base import Controller
 
 
 def main():
-    Controller.run()
+    view = View()
+    controller = Controller(view)
+    controller.run()
 
 
 if __name__ == "__main__":
