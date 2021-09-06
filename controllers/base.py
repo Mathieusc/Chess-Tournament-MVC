@@ -156,7 +156,6 @@ class Controller:
             print("\nGlobal ranking:")
             for every_player in enumerate(global_ranking, 1):
                 print(every_player)
-            # Pas bien ça je perds l'objet player juste pour utiliser des string, modifier les autres !! garder l'entité
             player_name = Player.get_players_from_ranking(global_ranking)
             print("Get players from ranking:")
             print(player_name)
