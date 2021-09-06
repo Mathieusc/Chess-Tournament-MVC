@@ -160,9 +160,11 @@ class Controller:
             player_name = Player.get_players_from_ranking(global_ranking)
             print("Get players from ranking:")
             print(player_name)
-            # Aglo suisse ici
+            # Aglo suisse ici avant ou après player_name
+
             pair_players = Player.create_pairs_of_players(player_name)
             split_players = Player.split_pairs_of_players(pair_players)
+
             try:
                 rounds[tournament.current_round] = tournament.build_next_round(split_players)
                 serialize_tournament.update({'rounds': rounds}, doc_ids=[len(serialize_tournament)])
