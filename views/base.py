@@ -2,47 +2,23 @@
 
 from models.tourney import Tourney
 from models.player import Player
-from models.datadb import Data
-from tinydb import TinyDB, Query
-import controllers.base as control
-import pprint
-#import string
+
 
 class View:
     """Chess tournament view."""
 
-    def generate_tournament():
-        # Peut mettre dans Tourney
-        tournament_name = input("Entrez le nom du tournois: ")
-        Tourney.name = tournament_name
-        tournament_location = input("Entrez le lieu du tournois: ")
-        Tourney.location = tournament_location
-        tournament_date = input("Entrez la date du tournois: (en format Mois/Jour/Année)")
-        Tourney.date = tournament_date
-        tournament_rounds = int(input("Entrez le nombre de rounds: "))
-        Tourney.number_of_rounds = tournament_rounds
-        tournament = Tourney(tournament_name, tournament_location, tournament_date, tournament_rounds)
-        return tournament
-
-    def add_players_info():
-        # Renvoie list de joueurs que le controlleur mets dans la DB
-
-        players = []
-        player_first_name = str(input("Enter the player's first name: "))
-        player_last_name = input(f"Enter {player_first_name}'s last name': ")
-        player_dob = int(input(f"Enter {player_first_name}'s year of birth (ex: 1992)': "))
-        player_genre = input(f"Enter {player_first_name}'s' genre [Male/Female/Other] ? ")
-        player_rank = int(input(f"Enter {player_first_name}'s ranking: "))
-        player_id = int(input(f"Enter {player_first_name}'s ID: "))
-        player = Player(player_first_name, player_last_name, player_dob, player_genre, player_rank, player_id)
-        players.append(player)
-
-        return players
-
     def start_program(self):
-        print("*******************************************************************************************")
-        print("#                                 WELCOME TO CHESS MANAGER                                #")
-        print("*******************************************************************************************\n")
+        """"""
+
+        print(
+            "*******************************************************************************************"
+        )
+        print(
+            "#                                 WELCOME TO CHESS MANAGER                                #"
+        )
+        print(
+            "*******************************************************************************************\n"
+        )
         print("Tournament settings: ")
         print("[1] Start tournament.")
         print("[2] Load tournament.")
@@ -50,12 +26,12 @@ class View:
         print("[4] Add players to Database")
         print("[5] Report menu.")
         print("[0] Main menu.")
-
         menu = input("Choose your option: ")
+
         return menu
 
-
     def menu_start(self):
+        # Manual function needs to be done + respect MVC
         for i in range(90):
             print("-", end="")
         print("\nStarting new tournament:")
@@ -64,11 +40,10 @@ class View:
         while True:
             menu = input("Choose your option: ")
             if menu == "1":
-                # Manual function needs to be done
-                control.Controller.start_tournament()
+                pass
             if menu == "2":
-                control.Controller.start_tournament()
-                
+                pass
+
     def ask_continue(self):
         while True:
             ask = input("\nStart the next round ? [Y/N] ").upper()
@@ -81,23 +56,32 @@ class View:
 
         return ask
 
-    def prompt_ranking(players):
+    def prompt_ranking(self, players):
         for i in range(len(players)):
-            update_rank = int(input(f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "))
-        
+            update_rank = int(
+                input(
+                    f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "
+                )
+            )
+
         return update_rank
 
-    def prompt_load_tourney(table):
-        while True:
-            print("\nData from the previous tournament:")
-            #print(table)
-            ask = input("Load data ? [Y/N] ").upper()
-            if ask != "y".upper() and ask != "n".upper():
-                print("Invalid input.")
-            elif ask == "y".upper():
-                break
-            elif ask == "n".upper():
-                exit()
+    def generate_tournament(self):
+        # Peut mettre dans Tourney
+        tournament_name = input("Entrez le nom du tournois: ")
+        Tourney.name = tournament_name
+        tournament_location = input("Entrez le lieu du tournois: ")
+        Tourney.location = tournament_location
+        tournament_date = input(
+            "Entrez la date du tournois: (en format Mois/Jour/Année)"
+        )
+        Tourney.date = tournament_date
+        tournament_rounds = int(input("Entrez le nombre de rounds: "))
+        Tourney.number_of_rounds = tournament_rounds
+        tournament = Tourney(
+            tournament_name, tournament_location, tournament_date, tournament_rounds
+        )
+        return tournament
 
     def prompt_tournament(self):
         for i in range(90):
@@ -118,7 +102,9 @@ class View:
     def prompt_players(self):
         for i in range(90):
             print("-", end="")
-        print("\nPlayers settings: (if you selected Load tournament before, please use option 2 again)")
+        print(
+            "\nPlayers settings: (if you selected Load tournament before, please use option 2 again)"
+        )
         print("[1] Manually instanciate players.")
         print("[2] Load players from the previous tournament.")
         print("[3] Select players from the databse.")
@@ -140,7 +126,7 @@ class View:
         print("[2] Display all players in alphabetical order.")
         print("[3] Display every tournaments.")
         print("[4] Display players from tournaments (ranking).")
-        print("[5] Display players from tournaments (alphabetical")
+        print("[5] Display players from tournaments (alphabetical)")
         print("[6] Display matchs from Round 2")
         print("[7] Display matchs from Round 3")
         print("[8] Display matchs from Round 4")
@@ -149,28 +135,54 @@ class View:
 
         return menu
 
+    def add_players_info(self):
+        # Renvoie list de joueurs que le controlleur mets dans la DB
+
+        players = []
+        player_first_name = str(input("Enter the player's first name: "))
+        player_last_name = input(f"Enter {player_first_name}'s last name': ")
+        player_dob = int(
+            input(f"Enter {player_first_name}'s year of birth (ex: 1992)': ")
+        )
+        player_genre = input(
+            f"Enter {player_first_name}'s' genre [Male/Female/Other] ? "
+        )
+        player_rank = int(input(f"Enter {player_first_name}'s ranking: "))
+        player_id = int(input(f"Enter {player_first_name}'s ID: "))
+        player = Player(
+            player_first_name,
+            player_last_name,
+            player_dob,
+            player_genre,
+            player_rank,
+            player_id,
+        )
+        players.append(player)
+
+        return players
+
     def display_all_players(self, players):
         print("\nList of every players competing:")
         for player in players:
-            print(f"{players.index(player)+1}: {player.get('last_name')} {player.get('name')} - ID: {player.get('player_id')} - Rank: {player.get('ranking')}")
+            print(
+                f"{players.index(player)+1}: {player.get('last_name')} {player.get('name')}\
+- ID: {player.get('player_id')} - Rank: {player.get('ranking')}"
+            )
 
     def display_all_tournaments(self, tournaments):
         print("\nList of every tournaments:")
         # Utiliser l'ID de la table
         for tourneys in tournaments:
-            print(f"{tournaments.index(tourneys)+1}: {tourneys.get('name')} - {tourneys.get('location')} - {tourneys.get('date')} - Rounds: {tourneys.get('current_round')}")
+            print(
+                f"{tournaments.index(tourneys)+1}: {tourneys.get('name')} - {tourneys.get('location')}\
+- {tourneys.get('date')} - Rounds: {tourneys.get('current_round')}"
+            )
 
     def display_players_by_tournaments(self, tournaments):
-        # print("\nList of every players by tournaments:")
-        # display = [(player.get('name'), player.get('ranking')) for player in players[0]]
-        # for tourneys in tournaments:
-        #     print(f"{tournaments.index(tourneys)+1}: {tourneys.get('name')} - {tourneys.get('location')} - {tourneys.get('date')} - Rounds: {tourneys.get('current_round')} ,\
-        #         ")
-        #     print(display)
         print(repr(tournaments))
         for tourneys in tournaments:
             print("=================================================\n")
             print(f"{tourneys.get('name')}")
-            for player in tourneys['players']:
-                print(player['name'])
+            for player in tourneys["players"]:
+                print(player["name"])
             print("=================================================\n")

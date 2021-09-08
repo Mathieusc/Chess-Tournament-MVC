@@ -26,11 +26,8 @@ class Tourney:
     def generate_round(self, rounds):
         # Tourney
         round_history = []
-        round_1 = {"match_1": {},
-                   "match_2": {},
-                   "match_3": {},
-                   "match_4": {}}
-                    
+        round_1 = {"match_1": {}, "match_2": {}, "match_3": {}, "match_4": {}}
+
         for i in range(rounds):
             next_round = round_1.copy()
             round_history.append(next_round)
@@ -84,155 +81,121 @@ class Tourney:
         first_half = players[0:4]
         second_half = players[4:8]
         for i in range(4):
-            rounds[0][f"match_{i+1}"] = {first_half[i].first_name: self.first_round_result(first_half[i]),
-                                        second_half[i].first_name: self.first_round_result(second_half[i])}
+            rounds[0][f"match_{i+1}"] = {
+                first_half[i].first_name: self.first_round_result(first_half[i]),
+                second_half[i].first_name: self.first_round_result(second_half[i]),
+            }
 
         return rounds
 
     def first_round_result(self, player):
         """"""
-        player_result = input((f"Enter the score from the following player:\n{player.ID}: {player.first_name}: "))
-        
+        player_result = input(
+            (
+                f"Enter the score from the following player:\n{player.ID}: {player.first_name}: "
+            )
+        )
+
         return float(player_result)
 
     def build_next_round(self, split_players):
 
-        next_round = {"match_1": {},
-                      "match_2": {},
-                      "match_3": {},
-                      "match_4": {}}
+        next_round = {"match_1": {}, "match_2": {}, "match_3": {}, "match_4": {}}
 
         for i in range(4):
             pairs = split_players[i]
             print(f"{pairs[0]} VS {pairs[1]}")
-            next_round[f"match_{i+1}"] = {pairs[0]: self.next_round_result(pairs[0]),
-                                         pairs[1]: self.next_round_result(pairs[1])}
+            next_round[f"match_{i+1}"] = {
+                pairs[0]: self.next_round_result(pairs[0]),
+                pairs[1]: self.next_round_result(pairs[1]),
+            }
 
         return next_round
 
     def next_round_result(self, player):
         """Compared to first_round_result(), param= str('player_name'), not player object"""
-        player_result = input((f"Enter the score from the following player:\n{player}: "))
-            
+        player_result = input(
+            (f"Enter the score from the following player:\n{player}: ")
+        )
+
         return float(player_result)
-#-------------------------------------MANUAL SCORE INPUT-----------------------------------------------------------------------
+
     def get_round_result(self, scores):
         # Tourney
         """ """
 
-        ranking = {**scores["match_1"],
-                   **scores["match_2"],
-                   **scores["match_3"],
-                   **scores["match_4"]}
+        ranking = {
+            **scores["match_1"],
+            **scores["match_2"],
+            **scores["match_3"],
+            **scores["match_4"],
+        }
         sort_matchs = sorted(ranking.items(), key=lambda item: item[1], reverse=True)
 
         return sort_matchs
 
-    def change_player_ranking(self, players, ROUNDS, serialize_tournament):
+    def change_player_ranking(self, players, rounds, serialize_tournament):
         """"""
 
         player_ranks = Player.get_player_name_ranking(players)
-        get_round_result = self.add_scores(ROUNDS)
+        get_round_result = self.add_scores(rounds)
         sorted_round_result = self.sort_scores(get_round_result)
         global_ranking = self.display_global_ranking(player_ranks, sorted_round_result)
         print("Global ranking from the last tournament:")
         for scores in enumerate(global_ranking, 1):
             print(scores)
         for i in range(len(players)):
-            update_rank = float(input(f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "))
+            update_rank = float(
+                input(
+                    f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "
+                )
+            )
             players[i].ranking += update_rank
             print(f"New player's rank -> {players[i].ranking}")
         convert = Player.convert_to_dict(players)
-        serialize_tournament.update({'players': convert}, doc_ids=[len(serialize_tournament)])
-        
+        serialize_tournament.update({"all_players": convert})
+
         exit()
 
     def serialize_tournament(self, tournament):
         """"""
-        tournament_table = db.table('tournament')
+        tournament_table = db.table("tournament")
         serialize_tournament = {
-            'name': tournament.name,
-            'location': tournament.location,
-            'date': tournament.date,
-            'number_of_rounds': tournament.number_of_rounds,
-            'current_round': tournament.current_round
-            }
+            "name": tournament.name,
+            "location": tournament.location,
+            "date": tournament.date,
+            "number_of_rounds": tournament.number_of_rounds,
+            "current_round": tournament.current_round,
+        }
         tournament_table.insert(serialize_tournament)
 
         return tournament_table
 
     def get_tournament_table(self):
-        tournament_table = db.table('tournament')
-
-        return tournament_table
-
-    def update_tournament(tournament):
-        """"""
-        tournament_table = db.table('tournament')
-        serialize_tournament = {
-            'name': tournament.name,
-            'location': tournament.location,
-            'date': tournament.date,
-            'number_of_rounds': tournament.number_of_rounds,
-            'current_round': tournament.current_round,
-            'rounds': tournament.rounds
-            }
-
-        tournament_table.update(serialize_tournament)
-        return tournament_table
-
-    def update_rounds_table():
-
-        tournament_table = db.table('tournament')
-        rounds_table = db.table('rounds')
-        tournament_table.insert({'rounds': rounds_table})
+        tournament_table = db.table("tournament")
 
         return tournament_table
 
     def deserialize_tournament(tournament_data):
         """"""
 
-        name = tournament_data.get('name')
-        location = tournament_data.get('location')
-        date = tournament_data.get('date')
-        number_of_rounds = tournament_data.get('number_of_rounds')
-        rounds = tournament_data.get('rounds')
+        name = tournament_data.get("name")
+        location = tournament_data.get("location")
+        date = tournament_data.get("date")
+        number_of_rounds = tournament_data.get("number_of_rounds")
+        rounds = tournament_data.get("rounds")
         tournament = Tourney(name, location, date, number_of_rounds)
-        tournament.current_round = tournament_data.get('current_round')
+        tournament.current_round = tournament_data.get("current_round")
         tournament.rounds = rounds
-        players = tournament_data.get('players')
+        players = tournament_data.get("players")
         tournament.players = players
 
         return tournament
 
-    def check_previous_rounds():
-        Round = db.table('Rounds')
-        print("TinyDB:")
-        print(Round.all())
-
-        return Round.all()
-
-    def get_previous_rounds():
-        table = db.table('tournament')
-        rounds = table['Rounds']
-        print(rounds)
-
     def get_tournament_data():
-        tournament = db.table('tournament')
+        tournament = db.table("tournament")
 
         return tournament.all()
-
-    def get_round_number():
-        round_number = db.table('round_number')
-
-        return round_number.all()
-
-    def deserialize_round_number(round_table):
-        """"""
-
-        rnd = round_table.get('rnd_number')
-
-        return rnd
 
     def get_previous_rounds_data(round_list, table, current_round, total_round):
 
@@ -242,41 +205,11 @@ class Tourney:
 
         return table
 
-    def clear_round_table():
-        rounds_table = db.table('Rounds')
-        rounds_table.truncate()
-
-    def clear_current_round_table():
-        current_round_table = db.table('round_number')
-        current_round_table.truncate()
-
-    def clear_new_rounds():
-        new_rounds = db.table('new_rounds')
-        new_rounds.truncate()
-
     def clear_player_table():
-        players = db.table('players')
+        players = db.table("players")
         players.truncate()
-
-    def update_rounds_from_tournament(tournament_table, roundz):
-        current_table = tournament_table.doc_id=len(tournament_table)
-        update_dict = {
-            'current_round': roundz.get('current_round'),
-            'rounds': roundz.get('rounds')
-        }
-        tournament_table.update({'current_round': roundz.get('current_round')})
-
-        return current_table
 
     def get_current_table(tournament_table):
         current_table = tournament_table.get(doc_id=len(tournament_table))
 
         return current_table
-
-    def serialize_new_rounds(ronde):
-        rounds_table = db.table('new_rounds')
-        for key, value in ronde.items():
-            serializerd_round = {key: value}
-            rounds_table.insert(serializerd_round)
-
-        return rounds_table

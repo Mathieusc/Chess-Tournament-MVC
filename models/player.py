@@ -1,16 +1,18 @@
 """Defines the players."""
-from tinydb import TinyDB
 from models.datadb import db
 
+
 class Player:
+    """"""
 
     LIST_OF_PLAYERS = []
 
     def __init__(self, first_name, last_name, year_of_birth, gender, ranking, ID):
-        # first_name = Prénom, last_name = Nom
+        # First_name = Prénom(fr), last_name = Nom(fr)
         self.first_name = first_name
         self.last_name = last_name
-        self.year_of_birth = year_of_birth # YEAR format
+        # YEAR format
+        self.year_of_birth = year_of_birth
         self.gender = gender
         self.ranking = ranking
         self.ID = ID
@@ -31,16 +33,16 @@ class Player:
 
     def add_players_to_data(player):
         players_list = []
-        players_table = db.table('all_players')
-        #players_table.truncate() # clear the table first
+        players_table = db.table("all_players")
+        # players_table.truncate()  # Clear the table first
         for players in player:
             serializerd_player = {
-                'name': players.first_name,
-                'last_name': players.last_name,
-                'year_of_birth': players.year_of_birth,
-                'gender': players.gender,
-                'ranking': players.ranking,
-                'player_id': players.ID,
+                "name": players.first_name,
+                "last_name": players.last_name,
+                "year_of_birth": players.year_of_birth,
+                "gender": players.gender,
+                "ranking": players.ranking,
+                "player_id": players.ID,
             }
             players_list.append(serializerd_player)
             players_table.insert(serializerd_player)
@@ -59,8 +61,8 @@ class Player:
 
     def create_pairs_of_players(players):
         # Tourney
-    
-        return [players[i] +"_"+ players[i+1] for i in range(0, len(players), 2)]
+
+        return [players[i] + "_" + players[i + 1] for i in range(0, len(players), 2)]
 
     def split_pairs_of_players(pairs_of_players):
         # Tourney
@@ -76,16 +78,16 @@ class Player:
 
     def serialize_players(player):
         players_list = []
-        players_table = db.table('all_players')
-        players_table.truncate() # clear the table first
+        players_table = db.table("all_players")
+        players_table.truncate()  # clear the table first
         for players in player:
             serializerd_player = {
-                'name': players.first_name,
-                'last_name': players.last_name,
-                'year_of_birth': players.year_of_birth,
-                'gender': players.gender,
-                'ranking': players.ranking,
-                'player_id': players.ID,
+                "name": players.first_name,
+                "last_name": players.last_name,
+                "year_of_birth": players.year_of_birth,
+                "gender": players.gender,
+                "ranking": players.ranking,
+                "player_id": players.ID,
             }
             players_list.append(serializerd_player)
             players_table.insert(serializerd_player)
@@ -94,36 +96,39 @@ class Player:
         """"""
         player_list = []
         for players in players_data:
-            name = players.get('name')
-            last_name = players.get('last_name')
-            year_of_birth = players.get('year_of_birth')
-            gender = players.get('gender')
-            ranking = players.get('ranking')
-            ID = players.get('player_id')
+            name = players.get("name")
+            last_name = players.get("last_name")
+            year_of_birth = players.get("year_of_birth")
+            gender = players.get("gender")
+            ranking = players.get("ranking")
+            ID = players.get("player_id")
             player_ = Player(name, last_name, year_of_birth, gender, ranking, ID)
             player_list.append(player_)
 
         return player_list
 
     def get_player_data():
-        players = db.table('players')
+        players = db.table("players")
 
         return players.all()
 
     def convert_to_dict(players):
         player_list = []
-        playerz= {}
+        playerz = {}
         for player in players:
             playerz = {
-                'name': player.first_name,
-                'last_name': player.last_name,
-                'year_of_birth': player.year_of_birth,
-                'gender': player.gender,
-                'ranking': player.ranking,
-                'player_id': player.ID
+                "name": player.first_name,
+                "last_name": player.last_name,
+                "year_of_birth": player.year_of_birth,
+                "gender": player.gender,
+                "ranking": player.ranking,
+                "player_id": player.ID,
             }
             player_list.append(playerz)
 
         return player_list
-    
 
+    def get_all_players():
+        all_players = db.table("all_players")
+
+        return all_players.all()
