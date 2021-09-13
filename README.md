@@ -1,7 +1,7 @@
 # Openclassrooms Project 4
 
 Chess tournament manager using the swiss system (non-eleminatory).  
-Python program using the MVC pattern and object oriented.  
+Python program using the MVC pattern and object oriented paradigm.  
 First version of the program.
 
 ## Getting Started
