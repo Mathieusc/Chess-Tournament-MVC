@@ -269,8 +269,6 @@ class Tourney:
         tournament = Tourney(name, location, date, number_of_rounds)
         tournament.current_round = tournament_data.get("current_round")
         tournament.rounds = rounds
-        players = tournament_data.get("players")
-        tournament.players = players
 
         return tournament
 

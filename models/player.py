@@ -109,7 +109,7 @@ class Player:
         return player_list
 
     def get_player_data():
-        players = db.table("players")
+        players = db.table("all_players")
 
         return players.all()
 
