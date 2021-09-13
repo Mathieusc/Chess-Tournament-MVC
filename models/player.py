@@ -19,20 +19,22 @@ class Player:
         self.ID = ID
         self.LIST_OF_PLAYERS.append(self)
 
-    def generates_player(self):
-        player_1 = Player("Magnus", "Carlsen", 1990, "Male", 2847, 1)
-        player_2 = Player("Yifan", "Hou", 1994, "Female", 2720, 2)
-        player_3 = Player("Ding ", "Liren", 1992, "Male", 2691, 3)
-        player_4 = Player("Aleksandra", "Goryachkina", 1998, "Female", 2589, 4)
-        player_5 = Player("Levron", "Aronian", 1982, "Male", 2481, 5)
-        player_6 = Player("Koneru", "Humpy", 1987, "Female", 2377, 6)
-        player_7 = Player("Anish", "Giri", 1994, "Male", 2276, 7)
-        player_8 = Player("Wenjun", "Ju", 1991, "Female", 2170, 8)
-        list_of_players = Player.LIST_OF_PLAYERS
+    @classmethod
+    def generates_player(cls):
+        player_1 = cls("Magnus", "Carlsen", 1990, "Male", 2847, 1)
+        player_2 = cls("Yifan", "Hou", 1994, "Female", 2720, 2)
+        player_3 = cls("Ding ", "Liren", 1992, "Male", 2691, 3)
+        player_4 = cls("Aleksandra", "Goryachkina", 1998, "Female", 2589, 4)
+        player_5 = cls("Levron", "Aronian", 1982, "Male", 2481, 5)
+        player_6 = cls("Koneru", "Humpy", 1987, "Female", 2377, 6)
+        player_7 = cls("Anish", "Giri", 1994, "Male", 2276, 7)
+        player_8 = cls("Wenjun", "Ju", 1991, "Female", 2170, 8)
+        list_of_players = cls.LIST_OF_PLAYERS
 
         return list_of_players
 
-    def add_players_to_data(player):
+    @classmethod
+    def add_players_to_data(cls, player):
         players_list = []
         players_table = db.table("all_players")
         # players_table.truncate()  # Clear the table first
@@ -48,27 +50,31 @@ class Player:
             players_list.append(serializerd_player)
             players_table.insert(serializerd_player)
 
+    @staticmethod
     def sort_players_by_ranking(players):
-        # Tourney
         """"""
 
         return sorted(players, key=lambda player: player.ranking, reverse=True)
 
+    @staticmethod
     def get_players_from_ranking(ranking):
         # Player
         """"""
 
         return [players[0] for players in ranking]
 
+    @staticmethod
     def create_pairs_of_players(players):
         # Tourney
 
         return [players[i] + "_" + players[i + 1] for i in range(0, len(players), 2)]
 
+    @staticmethod
     def split_pairs_of_players(pairs_of_players):
         # Tourney
         return [elements.split("_") for elements in pairs_of_players]
 
+    @staticmethod
     def get_player_name_ranking(player):
         # Player
         sorted_dict = {}
@@ -77,7 +83,8 @@ class Player:
 
         return sorted(sorted_dict.items(), key=lambda item: item[1], reverse=True)
 
-    def serialize_players(player):
+    @classmethod
+    def serialize_players(cls, player):
         players_list = []
         players_table = db.table("all_players")
         players_table.truncate()  # clear the table first
@@ -93,7 +100,8 @@ class Player:
             players_list.append(serializerd_player)
             players_table.insert(serializerd_player)
 
-    def deserialize_players(players_data):
+    @classmethod
+    def deserialize_players(cls, players_data):
         """"""
         player_list = []
         for players in players_data:
@@ -108,11 +116,7 @@ class Player:
 
         return player_list
 
-    def get_player_data():
-        players = db.table("all_players")
-
-        return players.all()
-
+    @staticmethod
     def convert_to_dict(players):
         player_list = []
         playerz = {}
@@ -129,7 +133,8 @@ class Player:
 
         return player_list
 
-    def get_all_players():
+    @classmethod
+    def get_all_players(cls):
         all_players = db.table("all_players")
 
         return all_players.all()

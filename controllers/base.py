@@ -121,7 +121,7 @@ class Controller:
         print(f"\nRounds from previous tournament:\n{rounds}")
         # Players
         # load_players = tournament.players
-        player_table = Player.get_player_data()
+        player_table = Player.get_all_players()
         players = Player.deserialize_players(player_table)
         # Global ranking data
         player_ranks = Player.get_player_name_ranking(players)
@@ -146,7 +146,7 @@ class Controller:
         serialize_tournament = tournament.serialize_tournament(tournament)
 
         # players = View.prompt_players()
-        players = Player.generates_player(Player)
+        players = Player.generates_player()
         player_ranks = Player.get_player_name_ranking(players)
         Player.serialize_players(players)
         print(f"\nPlayer ranks:\n{player_ranks}")
