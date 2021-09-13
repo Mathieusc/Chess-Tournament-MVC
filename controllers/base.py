@@ -1,11 +1,18 @@
-""""""
+"""Base controller."""
 
-from models.datadb import Data
+from models.datadb import Data, db
 from models.player import Player
 from models.tourney import Tourney
 
 
 class Controller:
+    """
+    Tournament controller.
+
+    Param:
+        View class.
+    """
+
     def __init__(self, view):
         self.view = view
 
@@ -32,7 +39,7 @@ class Controller:
                 print("Invalid input, please try again.")
 
     def run_report(self):
-        """"""
+        """Report menu."""
 
         data = Data()
         while True:
@@ -80,9 +87,13 @@ class Controller:
                 print("INVALID input, please try again.")
 
     def load_ranking_data(self):
-        """Loads the last tournament data, runs the function that updates the player's ranks."""
+        """
+        Load the last tournament data.
 
-        load_tourney = Tourney.get_tournament_data()
+        Runs the tournament function that updates the player's ranks.
+        """
+
+        load_tourney = Data.get_tournament(db)
         tournament = Tourney.deserialize_tournament(load_tourney[-1])
         rounds = tournament.rounds
         serialize_tournament = tournament.get_tournament_table()
@@ -92,8 +103,13 @@ class Controller:
         tournament.change_player_ranking(Players, rounds, serialize_tournament)
 
     def load_tournament_data(self):
-        # Tournament data
-        load_tourney = Tourney.get_tournament_data()
+        """
+        Load the last tournament data.
+
+        Runs the tournament function to continue (if undone) the last tournament.
+        """
+
+        load_tourney = Data.get_tournament(db)
         tournament = Tourney.deserialize_tournament(load_tourney[-1])
         if tournament.current_round == 4:
             print(
@@ -118,8 +134,14 @@ class Controller:
         self.run_tournament(tournament, players, rounds, global_ranking)
 
     def setup_tournament(self):
+        """
+        Initialize the objects to start a tournament.
+
+        Runs the tournament function to execute each rounds and pair players accordingly.
+        """
+
         # tournament = View.prompt_tournament()
-        tournament = Tourney("Grand Chess Tour", "London", "November 06, 2021", 4)
+        tournament = Tourney("Grand Chess Tour", "London", "November 06, 2021")
         tournament.current_round = 1
         serialize_tournament = tournament.serialize_tournament(tournament)
 
@@ -148,6 +170,7 @@ class Controller:
         # scores_ranks = tournament.get_scores_by_ranking(new_rounds)
         # print(scores_ranks)
 
+        # Send this to the view
         for every_player in enumerate(global_ranking, 1):
             print(every_player)
         # ------------------------------------------------------------------------------------
@@ -163,14 +186,24 @@ class Controller:
         self.run_tournament(tournament, players, rounds, global_ranking)
 
     def run_tournament(self, tournament, players, rounds, global_ranking):
-        """"""
+        """
+        Execute each rounds and pair players for the tournament previously initialized.
 
-        # Data from the current/previous tournament
+        Param:
+            tournament (Tourney object) from the Tourney class.
+            players (Player object): List of players objects from the Player class.
+            rounds (list of dicts): Dictionaries of every rounds [{Match_x:{player_1: score_1, player_2: score_2}}]
+            global_ranking (list of tuples): Players sorted by scores and ranks[("Player",(score, ranking))]
+
+        When the tournament ends, runs the tournament function to update the player's ranks.
+        """
+
+        # Data from the current/previous tournament.
         rounds_left = tournament.number_of_rounds - tournament.current_round
         player_ranks = Player.get_player_name_ranking(players)
         serialize_tournament = tournament.get_tournament_table()
 
-        # run each matchs for every rounds
+        # Run each matchs for every rounds.
         for matchs in range(rounds_left):
             get_round_result = tournament.add_scores(rounds)
             print(f"\nRounds results:\n{get_round_result}")

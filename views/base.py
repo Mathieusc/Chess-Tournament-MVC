@@ -8,7 +8,7 @@ class View:
     """Chess tournament view."""
 
     def start_program(self):
-        """"""
+        """Display the main menu."""
 
         print(
             "*******************************************************************************************"
@@ -26,9 +26,8 @@ class View:
         print("[4] Add players to Database")
         print("[5] Report menu.")
         print("[0] Main menu.")
-        menu = input("Choose your option: ")
-
-        return menu
+    
+        return input("Choose your option: ")
 
     def menu_start(self):
         # Manual function needs to be done + respect MVC

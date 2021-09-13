@@ -1,4 +1,5 @@
 """Defines the players."""
+
 from models.datadb import db
 
 

@@ -1,11 +1,20 @@
-"""Defines a tournament."""
+"""Defines and run a tournament."""
 
 from models.player import Player
 from models.datadb import db
 
 
 class Tourney:
-    def __init__(self, name, location, date, number_of_rounds):
+    """
+    Class used to represent a tournament.
+
+    Param:
+        name (str)
+        location (str)
+        date (str)
+        number_of_rounds (int) - default value = 4
+    """
+    def __init__(self, name, location, date, number_of_rounds=4):
         self.name = name
         self.location = location
         self.date = date
@@ -13,18 +22,23 @@ class Tourney:
 
     def match_format(self):
         """
-        Bullet = 1 à 2 minutes par joueurs
-        Blitz = 3, 5 ou 10 minutes par joueurs (pour tous les tours)
-        Speed chess = 15 à 60 minutes par joueurs
+        Bullet = 1 to 2 minutes per player
+        Blitz = 3, 5 or 10 minutes per player each turn
+        Speed chess = 15 to 60 minutes per player
         """
         pass
 
     def director_description(self):
-        # Remarques du directeur
+        # Director's feedback
         pass
 
     def generate_round(self, rounds):
-        # Tourney
+        """
+        Setup empty dicts for match 1 to 4.
+
+        Return:
+             List of dict.
+        """
         round_history = []
         round_1 = {"match_1": {}, "match_2": {}, "match_3": {}, "match_4": {}}
 
@@ -35,8 +49,14 @@ class Tourney:
         return round_history
 
     def add_scores(self, scores):
-        """param: list of dict (match results + empty matchs)
-        return: only one dict with results-> player: score"""
+        """
+        Add scores from a round to the previously generated dicts of matchs.
+
+        Param: 
+            List of dicts (match results + empty matchs)
+        Return: 
+            Dict with results -> player: score
+        """
         score_list = {}
 
         for rnd in scores:
@@ -50,15 +70,28 @@ class Tourney:
         return score_list
 
     def sort_scores(self, scores):
-        """param: list of dict player: result
-        return: list of tuples (player, result) sorted by scores"""
+        """
+        Sort player by scores from a round.
 
+        Param: 
+            List of dicts - player: result
+        Return: 
+            List of tuples (player, result) sorted by scores.
+        """
         global_ranking = sorted(scores.items(), key=lambda item: item[1], reverse=True)
 
         return global_ranking
 
     def display_global_ranking(self, rank_list, score_list):
-        # Tourney
+        """
+        Add player's scores and ranking and sort them by each.
+
+        Param:
+            rank_list (List of tuples (player, rank))
+            score_list (List of dicts (player, score))
+        Return:
+            List of tuples with (Players, (scores, ranks)) sorted by scores and ranks.
+        """
         rank_list = dict(rank_list)
         score_list = dict(score_list)
         for key, value in rank_list.items():
@@ -76,7 +109,15 @@ class Tourney:
         return score_list
 
     def build_first_round(self, rounds, players_list):
+        """
+        Generate the first round, sort players, split them in half and pairs them.
 
+        Param:
+            rounds (List of dicts) Generated matchs
+            players_list (List of players)
+        Return:
+            List of dicts [{"Match_x":{"player_1": score_1, "player_2": score_2}}...]
+        """
         players = sorted(players_list, key=lambda player: player.ranking, reverse=True)
         first_half = players[0:4]
         second_half = players[4:8]
@@ -89,7 +130,10 @@ class Tourney:
         return rounds
 
     def first_round_result(self, player):
-        """"""
+        """
+        Ask the user to enter the player's score.
+        View ?
+        """
         player_result = input(
             (
                 f"Enter the score from the following player:\n{player.ID}: {player.first_name}: "
@@ -99,7 +143,12 @@ class Tourney:
         return float(player_result)
 
     def build_next_round(self, split_players):
+        """
+        Pair each players for the next rounds.
 
+        Param:
+            split_players (list of tuples) Pairs of players
+        """
         next_round = {"match_1": {}, "match_2": {}, "match_3": {}, "match_4": {}}
 
         for i in range(4):
@@ -113,7 +162,12 @@ class Tourney:
         return next_round
 
     def next_round_result(self, player):
-        """Compared to first_round_result(), param= str('player_name'), not player object"""
+        """
+        Ask the user to enter the player's score.
+
+        Param:
+            player (Player object)
+        """
         player_result = input(
             (f"Enter the score from the following player:\n{player}: ")
         )
@@ -122,8 +176,13 @@ class Tourney:
 
     def get_round_result(self, scores):
         # Tourney
-        """ """
+        """Sort each matchs from player's scores.
 
+        Param:
+            scores (dict)
+        Return:
+            List of dicts of each matchs sorted by scores.
+        """
         ranking = {
             **scores["match_1"],
             **scores["match_2"],
@@ -135,7 +194,14 @@ class Tourney:
         return sort_matchs
 
     def change_player_ranking(self, players, rounds, serialize_tournament):
-        """"""
+        """
+        Update the ranking from every player of a tournament.
+
+        Param:
+            players (Player objects) List of every players
+            rounds (dict) List of every matchs from every rounds
+            serialize_tournament (Tinydb doc) Saved data from the tournament.
+        """
 
         player_ranks = Player.get_player_name_ranking(players)
         get_round_result = self.add_scores(rounds)
@@ -158,7 +224,14 @@ class Tourney:
         exit()
 
     def serialize_tournament(self, tournament):
-        """"""
+        """
+        Serialize a tournament object into a json file.
+
+        Param:
+            tournament (Tourney object)
+        Return:
+            TinyDB document table.
+        """
         tournament_table = db.table("tournament")
         serialize_tournament = {
             "name": tournament.name,
@@ -172,12 +245,21 @@ class Tourney:
         return tournament_table
 
     def get_tournament_table(self):
+        """
+        Return:
+            Table document used to serialize the data from the tournament.
+        """
         tournament_table = db.table("tournament")
 
         return tournament_table
 
     def deserialize_tournament(tournament_data):
-        """"""
+        """
+        Deserialize tournament's data into a Tourney object.
+
+        Param:
+            tournament_data (json dict)
+        """
 
         name = tournament_data.get("name")
         location = tournament_data.get("location")
@@ -191,11 +273,6 @@ class Tourney:
         tournament.players = players
 
         return tournament
-
-    def get_tournament_data():
-        tournament = db.table("tournament")
-
-        return tournament.all()
 
     def get_previous_rounds_data(round_list, table, current_round, total_round):
 
