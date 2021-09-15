@@ -24,17 +24,13 @@ def test(joueurs, played):
             played.append(match)
             print("Matchs déjà joués:")
             print(played)
-            # Comment itérer sur les autres joueurs ?
-            break
-    # try:
-    #     test(joueurs, played)
-    # except IndexError:
-    #     print("Fin de liste")
-    # return match
+
+            try:
+                test(joueurs, played)
+            except IndexError:
+                print("Fin de liste")
+            return played
 
 w = test(joueurs, played)
-print("test")
+print("Liste des matchs nouveaux matchs ajoutés:")
 print(w)
-
-
-
