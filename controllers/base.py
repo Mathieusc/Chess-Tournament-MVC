@@ -151,6 +151,8 @@ class Controller:
         Player.serialize_players(players)
         print(f"\nPlayer ranks:\n{player_ranks}")
 
+        # Using ids for players
+
         # Rounds
         setup_rounds = tournament.generate_round(tournament.number_of_rounds)
         rounds = tournament.build_first_round(setup_rounds, players)
@@ -227,7 +229,7 @@ class Controller:
             player_name = Player.get_players_from_ranking(global_ranking)
             print("Get players from ranking:")
             print(player_name)
-            # Aglo suisse ici
+            # Swiss tournament pairing algorithm
             pair_players = tournament.pairs_swiss_system(player_name, matchs_played)
             print("New pair players items")
             print(pair_players)
