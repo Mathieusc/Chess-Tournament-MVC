@@ -2,7 +2,7 @@
 
 from models.player import Player
 from models.datadb import db
-
+import itertools
 
 class Tourney:
     """
@@ -288,3 +288,55 @@ class Tourney:
         current_table = tournament_table.get(doc_id=len(tournament_table))
 
         return current_table
+
+    def get_matchs_played(self, rounds):
+        """
+        Get the pairs of players that already played versus each other.
+        Param:
+            rounds (list of dicts) every matchs from the current tournament
+        Return:
+            List of tuples ('Player_1', 'Player_2')
+        """
+        match_played = []
+        for dicts in rounds:
+            for matchs in dicts.items():
+                match_played.append(tuple(matchs[1].keys()))
+
+        return match_played
+
+    def remove_empty(self, tuples):
+        """
+        Remove empty tuples from the list of matchs already played
+        Return:
+            List of tuples
+        """
+        remove_blanks = [matchs for matchs in tuples if matchs]
+
+        return remove_blanks
+
+    def pairs_swiss_system(self, players, matchs_played):
+        """
+        Create pairs of players that did not played against each other in the tournament (if possible).
+        Using itertools module with the zip and reapeat methods.
+        Param:
+            player_name (list) - Every players
+            matchs_played (list of tuples) Matchs already played
+        Return:
+            List of pairs of players.
+        """
+        for player_1, player_2 in zip(itertools.repeat(players[0]), players[1:]):
+            # Compare if each players already played against each other
+            if (player_1, player_2) not in matchs_played and (player_2, player_1) not in matchs_played:
+                matchs = (player_1, player_2)
+                # Remove players from the initial list
+                players.remove(player_1)
+                players.remove(player_2)
+                # Add the new matchs to the 'already played' list
+                matchs_played.append(matchs)
+                # Recursive call until the list of players is empty
+                try:
+                    self.pairs_swiss_system(players, matchs_played)
+                except IndexError as msg:
+                    msg = "List of players empty"
+                return ["_".join(player) for player in matchs_played[-4:]]
+                    

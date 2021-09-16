@@ -198,6 +198,16 @@ class Controller:
         When the tournament ends, runs the tournament function to update the player's ranks.
         """
 
+        # Get a list of tuples from every matchs already played from each rounds:
+        print("List of matchs already played")
+        match_played = tournament.get_matchs_played(rounds)
+        print(match_played)
+        # Clean empty matchs
+        matchs_played = tournament.remove_empty(match_played)
+        print("List of matchs CLEANED")
+        print(matchs_played)
+
+
         # Data from the current/previous tournament.
         rounds_left = tournament.number_of_rounds - tournament.current_round
         player_ranks = Player.get_player_name_ranking(players)
@@ -218,7 +228,15 @@ class Controller:
             print("Get players from ranking:")
             print(player_name)
             # Aglo suisse ici
-            pair_players = Player.create_pairs_of_players(player_name)
+            pair_players = tournament.pairs_swiss_system(player_name, matchs_played)
+            print("New pair players items")
+            print(pair_players)
+
+            # Remplacer l'objet pair_players
+            # pair_players = Player.create_pairs_of_players(player_name)
+            # print("Pair players object")
+            # print(pair_players)
+
             split_players = Player.split_pairs_of_players(pair_players)
             try:
                 rounds[tournament.current_round] = tournament.build_next_round(
