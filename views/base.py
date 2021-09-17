@@ -2,7 +2,7 @@
 
 from models.tourney import Tourney
 from models.player import Player
-
+from pprint import pprint
 
 class View:
     """Chess tournament view."""
@@ -67,15 +67,15 @@ class View:
 
     def generate_tournament(self):
         # Peut mettre dans Tourney
-        tournament_name = input("Entrez le nom du tournois: ")
+        tournament_name = input("Enter the tournament's name: ")
         Tourney.name = tournament_name
-        tournament_location = input("Entrez le lieu du tournois: ")
+        tournament_location = input("Enter the tournament's location: ")
         Tourney.location = tournament_location
         tournament_date = input(
-            "Entrez la date du tournois: (en format Mois/Jour/Année)"
+            "Enter the tournament's date: (ISO format ex: 2021/06/30 for 30th June 2020)"
         )
         Tourney.date = tournament_date
-        tournament_rounds = int(input("Entrez le nombre de rounds: "))
+        tournament_rounds = int(input("Enter the number of rounds: "))
         Tourney.number_of_rounds = tournament_rounds
         tournament = Tourney(
             tournament_name, tournament_location, tournament_date, tournament_rounds
@@ -182,6 +182,132 @@ class View:
         for tourneys in tournaments:
             print("=================================================\n")
             print(f"{tourneys.get('name')}")
-            for player in tourneys["players"]:
+            for player in tourneys["all_players"]:
                 print(player["name"])
             print("=================================================\n")
+
+    def first_pairs(self, players):
+        """
+        Display the pairing matchs for the first round.
+        Param:
+            player (list) every Player object
+        """
+        # x = second half of players, pairing first half index versus second half index player.
+        x = 4
+        for i in range(4):
+            print(f"Match {i+1}: {players[i].first_name} VS {players[x].first_name}")
+            x += 1
+        print()
+
+    def next_pairs(self, players):
+        """
+        Display the pairing matchs for the next rounds.
+        Param:
+            player (list) of player tuples.
+        """
+ 
+        print("\nNext round:")
+        i = 0
+        for player in players:
+            print(f"Match {i+1}: {player[0]} VS {player[1]}")
+            i += 1
+
+    def first_round_result(self, player):
+        """
+        Ask the user to enter the player's score (1, 0 or 0.5).
+        Param:
+            player (list) every Player object
+        """
+        while True:
+            player_result = input(
+                (
+                    f"Enter the score for:\n{player.ID}: {player.first_name}: "
+                )
+            )
+            if player_result != "1" and player_result != "0.5" and player_result != "0":
+                print("Invalid input, choose between 1, 0.5 or 0.")
+            else:
+                return float(player_result)
+
+    def next_round_result(self, player):
+        """
+        Ask the user to enter the player's score.
+
+        Param:
+            player (Player object)
+        """
+        while True:
+            player_result = input(
+                (f"Enter the score for:\n{player}: ")
+            )
+            if player_result != "1" and player_result != "0.5" and player_result != "0":
+                print("Invalid input, choose between 1, 0.5 or 0.")
+            else:
+                return float(player_result)
+
+    def display_tournament_info(self, tournament):
+        """
+        Display tournament name, location, date and number of rounds.
+        NEED TO ADD FORMAT (blitz, bullet...).
+        Param:
+            tournament (Tourney object)
+        """
+        print(f"\nThe '{tournament.name}' tournament has started !")
+        print(f"Number of rounds: {tournament.number_of_rounds}\n")
+    
+    def display_players_ranks(self, players):
+        """
+        Enumerates each players sorted by their ranks.
+        Param:
+            players (list) every players
+        """
+        print("Participants:")
+        for player in enumerate(players, 1):
+            print(player)
+        print("\nInitializing the first round...")
+
+    def display_round_result(self, rounds):
+        """
+        Display the scores from each players.
+        Param:
+            rounds (dicts) every matchs
+        """
+        print("\nRounds result:")
+        print(str(rounds).replace("{", "").replace("}", "").replace("'", "").replace(",", " -"))
+        print()
+
+    def display_tournament_ranking(self, global_ranking):
+        """
+        Display each player's results from the tournament, sorted by scores and ranks
+        Param:
+            global_ranking (List of tuples) Player, scores and ranks
+        """
+        print("\nTournament ranking:")
+        for player in enumerate(global_ranking, 1):
+            print(player)
+        print()
+
+    def display_tournament_over(self, tournament):
+        """
+        Display that the tournament is over if the user tries to load the previous tournament from the main menu.
+        Param:
+            tournament (Tourney object)
+        """
+        print(f"\n{tournament.name} - Rounds: {tournament.current_round}/{tournament.number_of_rounds}\
+                \nThis tournament is over !\n"
+             )
+
+    def ask_to_load(self, tournament):
+        """
+        Display the tournament informations and ask the user to load it.
+        """
+        print("\nTournament info:")
+        print(f"{tournament.name} - Location: {tournament.location} - Started: {tournament.date} - Rounds: {tournament.current_round}/{tournament.number_of_rounds}")
+        while True:
+            ask = input("\nLoad this tournament ? [Y/N] ").upper()
+            if ask != "y".upper() and ask != "n".upper():
+                print("Invalid input, press 'y' or 'n'")
+            elif ask == "y".upper():
+                break
+            elif ask == "n".upper():
+                exit()

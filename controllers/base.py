@@ -112,13 +112,9 @@ class Controller:
         load_tourney = Data.get_tournament(db)
         tournament = Tourney.deserialize_tournament(load_tourney[-1])
         if tournament.current_round == 4:
-            print(
-                f"{tournament.name}, rounds done: {tournament.current_round}/{tournament.number_of_rounds}\
-                \nThis tournament is over !"
-            )
+            self.view.display_tournament_over(tournament)
             self.run()
         rounds = tournament.rounds
-        print(f"\nRounds from previous tournament:\n{rounds}")
         # Players
         # load_players = tournament.players
         player_table = Player.get_all_players()
@@ -131,6 +127,7 @@ class Controller:
             player_ranks, sorted_round_result
         )
 
+        self.view.ask_to_load(tournament)
         self.run_tournament(tournament, players, rounds, global_ranking)
 
     def setup_tournament(self):
@@ -139,50 +136,35 @@ class Controller:
 
         Runs the tournament function to execute each rounds and pair players accordingly.
         """
-
-        # tournament = View.prompt_tournament()
+        # To manually create a tournament:
+        # tournament = self.view.prompt_tournament()
         tournament = Tourney("Grand Chess Tour", "London", "November 06, 2021")
         tournament.current_round = 1
         serialize_tournament = tournament.serialize_tournament(tournament)
+        self.view.display_tournament_info(tournament)
 
-        # players = View.prompt_players()
+        # To manually create players:
+        # players = self.view.prompt_players()
         players = Player.generates_player()
         player_ranks = Player.get_player_name_ranking(players)
         Player.serialize_players(players)
-        print(f"\nPlayer ranks:\n{player_ranks}")
+        self.view.display_players_ranks(player_ranks)
 
-        # Using ids for players
-
-        # Rounds
+        # Generate Rounds
         setup_rounds = tournament.generate_round(tournament.number_of_rounds)
-        rounds = tournament.build_first_round(setup_rounds, players)
+        rounds = tournament.build_first_round(setup_rounds, players, self.view.first_pairs, self.view.first_round_result)
         get_round_result = tournament.add_scores(rounds)
-        # Appeler la vue pour afficher les matchs, pas de prints dans tourney
-        print(f"\nRounds results:\n{get_round_result}")
-        print("Convert int keys into str keys in rounds result:")
-        new_rounds = {str(key): value for key, value in get_round_result.items()}
-        print(new_rounds)
-
+        self.view.display_round_result(get_round_result)
         sorted_round_result = tournament.sort_scores(get_round_result)
         global_ranking = tournament.display_global_ranking(
             player_ranks, sorted_round_result
         )
+        self.view.display_tournament_ranking(global_ranking)
 
-        # print("Get scores by ranking")
-        # scores_ranks = tournament.get_scores_by_ranking(new_rounds)
-        # print(scores_ranks)
-
-        # Send this to the view
-        for every_player in enumerate(global_ranking, 1):
-            print(every_player)
-        # ------------------------------------------------------------------------------------
-        # TINYDB
-
+        # TinyDB (save tournament data)
         serialize_tournament.update(
             {"rounds": rounds}, doc_ids=[len(serialize_tournament)]
         )
-        # convert = Player.convert_to_dict(players)
-        # serialize_tournament.update({'players': convert}, doc_ids=[len(serialize_tournament)])
 
         self.view.ask_continue()
         self.run_tournament(tournament, players, rounds, global_ranking)
@@ -200,15 +182,10 @@ class Controller:
         When the tournament ends, runs the tournament function to update the player's ranks.
         """
 
-        # Get a list of tuples from every matchs already played from each rounds:
-        print("List of matchs already played")
+        # Get matchs already played from each rounds:
         match_played = tournament.get_matchs_played(rounds)
-        print(match_played)
-        # Clean empty matchs
+        # Clean empty matchs.
         matchs_played = tournament.remove_empty(match_played)
-        print("List of matchs CLEANED")
-        print(matchs_played)
-
 
         # Data from the current/previous tournament.
         rounds_left = tournament.number_of_rounds - tournament.current_round
@@ -218,31 +195,20 @@ class Controller:
         # Run each matchs for every rounds.
         for matchs in range(rounds_left):
             get_round_result = tournament.add_scores(rounds)
-            print(f"\nRounds results:\n{get_round_result}")
+            self.view.display_round_result(get_round_result)
             sorted_round_result = tournament.sort_scores(get_round_result)
             global_ranking = tournament.display_global_ranking(
                 player_ranks, sorted_round_result
             )
-            print("\nGlobal ranking:")
-            for every_player in enumerate(global_ranking, 1):
-                print(every_player)
+            self.view.display_tournament_ranking(global_ranking)
             player_name = Player.get_players_from_ranking(global_ranking)
-            print("Get players from ranking:")
-            print(player_name)
             # Swiss tournament pairing algorithm
             pair_players = tournament.pairs_swiss_system(player_name, matchs_played)
-            print("New pair players items")
-            print(pair_players)
-
-            # Remplacer l'objet pair_players
-            # pair_players = Player.create_pairs_of_players(player_name)
-            # print("Pair players object")
-            # print(pair_players)
-
             split_players = Player.split_pairs_of_players(pair_players)
+            # Build next round:
             try:
                 rounds[tournament.current_round] = tournament.build_next_round(
-                    split_players
+                    split_players, self.view.next_pairs, self.view.next_round_result
                 )
                 serialize_tournament.update(
                     {"rounds": rounds}, doc_ids=[len(serialize_tournament)]
@@ -254,8 +220,8 @@ class Controller:
                 )
                 if tournament.current_round != 4:
                     self.view.ask_continue()
-            except IndexError:
-                print("No more matchs to be found !")
+            except IndexError as msg:
+                msg = "No more matchs to be found !"
                 exit()
         if tournament.current_round == 4:
-            tournament.change_player_ranking(players, rounds, serialize_tournament)
+            tournament.change_player_ranking(players, rounds, serialize_tournament, self.view.display_tournament_ranking)

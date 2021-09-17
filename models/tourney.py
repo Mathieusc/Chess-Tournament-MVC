@@ -55,7 +55,7 @@ class Tourney:
         Param: 
             List of dicts (match results + empty matchs)
         Return: 
-            Dict with results -> player: score
+            Dict with matchs results {player: added_score}
         """
         score_list = {}
 
@@ -102,13 +102,13 @@ class Tourney:
         # for player, score_rank in score_list:
         #     del score_rank[1]
 
-        # Displays everything:
+        # To Display everything from the view:
         # for player, score_rank in score_list:
         #     print(f"Player: {player}, score: {score_rank[0]}, ranking: {score_rank[1]}")
 
         return score_list
 
-    def build_first_round(self, rounds, players_list):
+    def build_first_round(self, rounds, players_list, pairs, first_round_result):
         """
         Generate the first round, sort players, split them in half and pairs them.
 
@@ -121,28 +121,16 @@ class Tourney:
         players = sorted(players_list, key=lambda player: player.ranking, reverse=True)
         first_half = players[0:4]
         second_half = players[4:8]
+        pairs(players)
         for i in range(4):
             rounds[0][f"match_{i+1}"] = {
-                first_half[i].first_name: self.first_round_result(first_half[i]),
-                second_half[i].first_name: self.first_round_result(second_half[i]),
+                first_half[i].first_name:  first_round_result(first_half[i]),
+                second_half[i].first_name: first_round_result(second_half[i]),
             }
 
         return rounds
 
-    def first_round_result(self, player):
-        """
-        Ask the user to enter the player's score.
-        View ?
-        """
-        player_result = input(
-            (
-                f"Enter the score from the following player:\n{player.ID}: {player.first_name}: "
-            )
-        )
-
-        return float(player_result)
-
-    def build_next_round(self, split_players):
+    def build_next_round(self, split_players, rounds_pairs, next_round_result):
         """
         Pair each players for the next rounds.
 
@@ -151,28 +139,17 @@ class Tourney:
         """
         next_round = {"match_1": {}, "match_2": {}, "match_3": {}, "match_4": {}}
 
+        rounds_pairs(split_players)
         for i in range(4):
             pairs = split_players[i]
-            print(f"{pairs[0]} VS {pairs[1]}")
             next_round[f"match_{i+1}"] = {
-                pairs[0]: self.next_round_result(pairs[0]),
-                pairs[1]: self.next_round_result(pairs[1]),
+                pairs[0]: next_round_result(pairs[0]),
+                pairs[1]: next_round_result(pairs[1]),
             }
 
         return next_round
 
-    def next_round_result(self, player):
-        """
-        Ask the user to enter the player's score.
 
-        Param:
-            player (Player object)
-        """
-        player_result = input(
-            (f"Enter the score from the following player:\n{player}: ")
-        )
-
-        return float(player_result)
 
     def get_round_result(self, scores):
         # Tourney
@@ -193,7 +170,7 @@ class Tourney:
 
         return sort_matchs
 
-    def change_player_ranking(self, players, rounds, serialize_tournament):
+    def change_player_ranking(self, players, rounds, serialize_tournament, ranking):
         """
         Update the ranking from every player of a tournament.
 
@@ -207,9 +184,7 @@ class Tourney:
         get_round_result = self.add_scores(rounds)
         sorted_round_result = self.sort_scores(get_round_result)
         global_ranking = self.display_global_ranking(player_ranks, sorted_round_result)
-        print("Global ranking from the last tournament:")
-        for scores in enumerate(global_ranking, 1):
-            print(scores)
+        ranking(global_ranking)
         for i in range(len(players)):
             update_rank = float(
                 input(
@@ -272,23 +247,6 @@ class Tourney:
 
         return tournament
 
-    def get_previous_rounds_data(round_list, table, current_round, total_round):
-
-        round_left = total_round - current_round
-        for i in range(round_left):
-            table.append(round_list[0])
-
-        return table
-
-    def clear_player_table():
-        players = db.table("players")
-        players.truncate()
-
-    def get_current_table(tournament_table):
-        current_table = tournament_table.get(doc_id=len(tournament_table))
-
-        return current_table
-
     def get_matchs_played(self, rounds):
         """
         Get the pairs of players that already played versus each other.
@@ -319,7 +277,7 @@ class Tourney:
         Create pairs of players that did not played against each other in the tournament (if possible).
         Using itertools module with the zip and reapeat methods.
         Param:
-            player_name (list) - Every players
+            players (list) - Every players
             matchs_played (list of tuples) Matchs already played
         Return:
             List of pairs of players.
@@ -340,3 +298,26 @@ class Tourney:
                     msg = "List of players empty"
                 return ["_".join(player) for player in matchs_played[-4:]]
                     
+    def get_player_by_id(self, id):
+        """
+        Get player ids from 'db.json'
+        Param:
+            id: (TinyDB Document)
+        Return:
+            Player key
+        """
+        players_table = db.table('all_players')
+        
+        return players_table.get(doc_id=id)
+
+    def converts_ids(self, rounds):
+        """
+        Convert ids from each matchs into the corresponding player's name.
+        Param:
+            rounds (dict) every matchs
+        Return:
+            Converted dictionaries with names instead of ids.
+        """
+        name_by_id = {self.get_player_by_id(player_id)['name']: score for player_id, score in rounds.items()}
+
+        return name_by_id
