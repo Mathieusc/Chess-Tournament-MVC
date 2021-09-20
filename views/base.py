@@ -52,29 +52,6 @@ class View:
 
         return ask
 
-    def generate_tournament(self):
-        """
-        Input from the user to manually create a tournament.
-
-        Return:
-            Tournament object.
-        """
-
-        tournament_name = input("Enter the tournament's name: ")
-        Tourney.name = tournament_name
-        tournament_location = input("Enter the tournament's location: ")
-        Tourney.location = tournament_location
-        tournament_date = input(
-            "Enter the tournament's date: (ISO format ex: 2021/06/30 for 30th June 2020)"
-        )
-        Tourney.date = tournament_date
-        tournament_rounds = int(input("Enter the number of rounds: "))
-        Tourney.number_of_rounds = tournament_rounds
-        tournament = Tourney(
-            tournament_name, tournament_location, tournament_date, tournament_rounds
-        )
-        return tournament
-
     def prompt_data(self):
         """
         Report menu.
