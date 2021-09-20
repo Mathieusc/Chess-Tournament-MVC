@@ -2,7 +2,6 @@
 
 from models.tourney import Tourney
 from models.player import Player
-from pprint import pprint
 
 
 class View:

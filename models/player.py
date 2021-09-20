@@ -38,14 +38,14 @@ class Player:
             List of player objects.
         """
 
-        player_1 = cls("Magnus", "Carlsen", 1990, "Male", 2847, 1)
-        player_2 = cls("Yifan", "Hou", 1994, "Female", 2720, 2)
-        player_3 = cls("Ding ", "Liren", 1992, "Male", 2691, 3)
-        player_4 = cls("Aleksandra", "Goryachkina", 1998, "Female", 2589, 4)
-        player_5 = cls("Levron", "Aronian", 1982, "Male", 2481, 5)
-        player_6 = cls("Koneru", "Humpy", 1987, "Female", 2377, 6)
-        player_7 = cls("Anish", "Giri", 1994, "Male", 2276, 7)
-        player_8 = cls("Wenjun", "Ju", 1991, "Female", 2170, 8)
+        cls("Magnus", "Carlsen", 1990, "Male", 2847, 1)
+        cls("Yifan", "Hou", 1994, "Female", 2720, 2)
+        cls("Ding ", "Liren", 1992, "Male", 2691, 3)
+        cls("Aleksandra", "Goryachkina", 1998, "Female", 2589, 4)
+        cls("Levron", "Aronian", 1982, "Male", 2481, 5)
+        cls("Koneru", "Humpy", 1987, "Female", 2377, 6)
+        cls("Anish", "Giri", 1994, "Male", 2276, 7)
+        cls("Wenjun", "Ju", 1991, "Female", 2170, 8)
         list_of_players = cls.LIST_OF_PLAYERS
 
         return list_of_players

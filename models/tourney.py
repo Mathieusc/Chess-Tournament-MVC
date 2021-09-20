@@ -201,8 +201,7 @@ class Tourney:
         for i in range(len(players)):
             update_rank = rank_update(players[i])
             players[i].ranking += update_rank
-            confirm = confirm_update(players[i])
-        convert = Player.convert_to_dict(players)
+            confirm_update(players[i])
         Player.serialize_players(players)
 
         exit()
@@ -306,8 +305,8 @@ class Tourney:
                 # Recursive call until the list of players is empty
                 try:
                     self.pairs_swiss_system(players, matchs_played)
-                except IndexError as msg:
-                    msg = "List of players empty"
+                except IndexError:
+                    print("List of players empty")
                 return ["_".join(player) for player in matchs_played[-4:]]
 
     def get_player_by_id(self, id):
