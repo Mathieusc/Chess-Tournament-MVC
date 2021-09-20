@@ -12,22 +12,33 @@ db = TinyDB("db.json")
 
 
 class Data:
-    """Send the document table from Tinydb requested from the controller."""
+    """
+    Send the document table from Tinydb requested from the controller.
+    """
 
     def get_all_players(self):
-        """Return the table of every player."""
+        """
+        Return the table of every player.
+        """
+
         player_table = db.table("all_players")
 
         return player_table.all()
 
     def get_tournament(self):
-        """Return the table of every tournament."""
+        """
+        Return the table of every tournament.
+        """
+
         tournaments = db.table("tournament")
 
         return tournaments.all()
 
     def get_tournaments_players(self):
-        """Return a list of every player from every tournament."""
+        """
+        Return a list of every player from every tournament.
+        """
+
         tournaments = db.table("tournament")
         tournament = tournaments.all()
         players = []

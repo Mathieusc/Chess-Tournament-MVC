@@ -17,7 +17,9 @@ class Controller:
         self.view = view
 
     def run(self):
-        """Main menu of the program."""
+        """
+        Main menu of the program.
+        """
 
         while True:
             main_menu = self.view.start_program()
@@ -39,7 +41,9 @@ class Controller:
                 print("Invalid input, please try again.")
 
     def run_report(self):
-        """Report menu."""
+        """
+        Report menu.
+        """
 
         data = Data()
         while True:
@@ -96,11 +100,16 @@ class Controller:
         load_tourney = Data.get_tournament(db)
         tournament = Tourney.deserialize_tournament(load_tourney[-1])
         rounds = tournament.rounds
-        serialize_tournament = tournament.get_tournament_table()
-        # load_players = tournament.players
         players = Player.get_all_players()
         Players = Player.deserialize_players(players)
-        tournament.change_player_ranking(Players, rounds, serialize_tournament)
+
+        tournament.change_player_ranking(
+            Players,
+            rounds,
+            self.view.display_tournament_ranking,
+            self.view.update_ranks,
+            self.view.confirm_update,
+        )
 
     def load_tournament_data(self):
         """
@@ -121,6 +130,9 @@ class Controller:
         players = Player.deserialize_players(player_table)
         # Global ranking data
         player_ranks = Player.get_player_name_ranking(players)
+        print("player ranks object")
+        print(player_ranks)
+        print(type(player_ranks))
         get_round_result = tournament.add_scores(rounds)
         sorted_round_result = tournament.sort_scores(get_round_result)
         global_ranking = tournament.display_global_ranking(
@@ -136,8 +148,8 @@ class Controller:
 
         Runs the tournament function to execute each rounds and pair players accordingly.
         """
-        # To manually create a tournament:
-        # tournament = self.view.prompt_tournament()
+
+        # Tournament
         tournament = Tourney("Grand Chess Tour", "London", "November 06, 2021")
         tournament.current_round = 1
         serialize_tournament = tournament.serialize_tournament(tournament)
@@ -152,7 +164,9 @@ class Controller:
 
         # Generate Rounds
         setup_rounds = tournament.generate_round(tournament.number_of_rounds)
-        rounds = tournament.build_first_round(setup_rounds, players, self.view.first_pairs, self.view.first_round_result)
+        rounds = tournament.build_first_round(
+            setup_rounds, players, self.view.first_pairs, self.view.first_round_result
+        )
         get_round_result = tournament.add_scores(rounds)
         self.view.display_round_result(get_round_result)
         sorted_round_result = tournament.sort_scores(get_round_result)
@@ -220,8 +234,14 @@ class Controller:
                 )
                 if tournament.current_round != 4:
                     self.view.ask_continue()
-            except IndexError as msg:
-                msg = "No more matchs to be found !"
+            except IndexError:
+                print("No more matchs to be found !")
                 exit()
         if tournament.current_round == 4:
-            tournament.change_player_ranking(players, rounds, serialize_tournament, self.view.display_tournament_ranking)
+            tournament.change_player_ranking(
+                players,
+                rounds,
+                self.view.display_tournament_ranking,
+                self.view.update_ranks,
+                self.view.confirm_update,
+            )

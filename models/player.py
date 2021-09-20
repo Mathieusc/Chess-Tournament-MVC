@@ -4,7 +4,17 @@ from models.datadb import db
 
 
 class Player:
-    """"""
+    """
+    Class used to represent players from the tournament inside a list.
+
+    Param:
+        first_name (str)
+        last_name (str)
+        year_of_birth (int)
+        gender (str)
+        ranking (int)
+        ID (int)
+    """
 
     LIST_OF_PLAYERS = []
 
@@ -21,6 +31,13 @@ class Player:
 
     @classmethod
     def generates_player(cls):
+        """
+        Auto generates a list of players for faster testing purposes.
+
+        Return:
+            List of player objects.
+        """
+
         player_1 = cls("Magnus", "Carlsen", 1990, "Male", 2847, 1)
         player_2 = cls("Yifan", "Hou", 1994, "Female", 2720, 2)
         player_3 = cls("Ding ", "Liren", 1992, "Male", 2691, 3)
@@ -35,9 +52,16 @@ class Player:
 
     @classmethod
     def add_players_to_data(cls, player):
+        """
+        Save players inside the db.json file.
+
+        Param:
+            Liste of player objects.
+        """
+
         players_list = []
         players_table = db.table("all_players")
-        # players_table.truncate()  # Clear the table first
+        players_table.truncate()  # Clear the table first
         for players in player:
             serializerd_player = {
                 "name": players.first_name,
@@ -52,31 +76,48 @@ class Player:
 
     @staticmethod
     def sort_players_by_ranking(players):
-        """"""
+        """
+        Sort players by their ranking attribute.
+
+        Param:
+            players (List of player objects)
+        """
 
         return sorted(players, key=lambda player: player.ranking, reverse=True)
 
     @staticmethod
     def get_players_from_ranking(ranking):
-        # Player
-        """"""
+        """
+        Get the players first_name attribute from the results of the current tournament.
+
+        Param:
+            ranking (List of tuples)
+        """
 
         return [players[0] for players in ranking]
 
     @staticmethod
-    def create_pairs_of_players(players):
-        # Tourney
-
-        return [players[i] + "_" + players[i + 1] for i in range(0, len(players), 2)]
-
-    @staticmethod
     def split_pairs_of_players(pairs_of_players):
-        # Tourney
+        """
+        Separate players from a pair previously created using the '_' as a separator.
+
+        Param:
+            pairs_of_players (List of tuples (player1_player2))
+        """
+
         return [elements.split("_") for elements in pairs_of_players]
 
     @staticmethod
     def get_player_name_ranking(player):
-        # Player
+        """
+        Get the players first_name and ranking attributes from the player objects.
+
+        Param:
+            player (List of player objects)
+        Return:
+            Sorted list of tuples (Player_name, Player_ranking)
+        """
+
         sorted_dict = {}
         for players in player:
             sorted_dict[players.first_name] = players.ranking
@@ -85,6 +126,13 @@ class Player:
 
     @classmethod
     def serialize_players(cls, player):
+        """
+        Serialize a player object into a json file.
+
+        Param:
+            player (List of player objects)
+        """
+
         players_list = []
         players_table = db.table("all_players")
         players_table.truncate()  # clear the table first
@@ -102,7 +150,15 @@ class Player:
 
     @classmethod
     def deserialize_players(cls, players_data):
-        """"""
+        """
+        Deserialize player's data into a Player object.
+
+        Param:
+            player's data (json dict)
+        Return:
+            List of player objects.
+        """
+
         player_list = []
         for players in players_data:
             name = players.get("name")
@@ -118,6 +174,15 @@ class Player:
 
     @staticmethod
     def convert_to_dict(players):
+        """
+        Convert player objects into a list of dictionaries.
+
+        Param:
+            players (List of player objects)
+        Return:
+            List of dictionaries.
+        """
+
         player_list = []
         playerz = {}
         for player in players:
@@ -135,6 +200,13 @@ class Player:
 
     @classmethod
     def get_all_players(cls):
+        """
+        Get every player from the documented database.
+
+        Return:
+            List of player dictionaries.
+        """
+
         all_players = db.table("all_players")
 
         return all_players.all()

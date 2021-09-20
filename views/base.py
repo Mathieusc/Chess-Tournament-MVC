@@ -4,11 +4,16 @@ from models.tourney import Tourney
 from models.player import Player
 from pprint import pprint
 
+
 class View:
-    """Chess tournament view."""
+    """
+    Chess tournament view.
+    """
 
     def start_program(self):
-        """Display the main menu."""
+        """
+        Display the main menu.
+        """
 
         print(
             "*******************************************************************************************"
@@ -26,24 +31,17 @@ class View:
         print("[4] Add players to Database")
         print("[5] Report menu.")
         print("[0] Main menu.")
-    
+
         return input("Choose your option: ")
 
-    def menu_start(self):
-        # Manual function needs to be done + respect MVC
-        for i in range(90):
-            print("-", end="")
-        print("\nStarting new tournament:")
-        print("[1] Manually instanciate players and tournament data.")
-        print("[2] Load players and tournament data.")
-        while True:
-            menu = input("Choose your option: ")
-            if menu == "1":
-                pass
-            if menu == "2":
-                pass
-
     def ask_continue(self):
+        """
+        Ask the user to start the next round or stop the program.
+
+        Return:
+            input (str)
+        """
+
         while True:
             ask = input("\nStart the next round ? [Y/N] ").upper()
             if ask != "y".upper() and ask != "n".upper():
@@ -55,18 +53,14 @@ class View:
 
         return ask
 
-    def prompt_ranking(self, players):
-        for i in range(len(players)):
-            update_rank = int(
-                input(
-                    f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "
-                )
-            )
-
-        return update_rank
-
     def generate_tournament(self):
-        # Peut mettre dans Tourney
+        """
+        Input from the user to manually create a tournament.
+
+        Return:
+            Tournament object.
+        """
+
         tournament_name = input("Enter the tournament's name: ")
         Tourney.name = tournament_name
         tournament_location = input("Enter the tournament's location: ")
@@ -82,41 +76,10 @@ class View:
         )
         return tournament
 
-    def prompt_tournament(self):
-        for i in range(90):
-            print("-", end="")
-        print("\nTournament settings:")
-        print("[1] Manually create tournament data.")
-        print("[2] Load the previous tournament.")
-        print("[3] Use the tournament data from file.")
-        while True:
-            menu = input("Choose your option: ")
-            if menu == "1":
-                pass
-            if menu == "2":
-                pass
-            if menu == "3":
-                pass
-
-    def prompt_players(self):
-        for i in range(90):
-            print("-", end="")
-        print(
-            "\nPlayers settings: (if you selected Load tournament before, please use option 2 again)"
-        )
-        print("[1] Manually instanciate players.")
-        print("[2] Load players from the previous tournament.")
-        print("[3] Select players from the databse.")
-        while True:
-            menu = input("Choose your option: ")
-            if menu == "1":
-                pass
-            if menu == "2:":
-                pass
-            if menu == "3":
-                pass
-
     def prompt_data(self):
+        """
+        Report menu.
+        """
 
         for i in range(90):
             print("-", end="")
@@ -135,7 +98,12 @@ class View:
         return menu
 
     def add_players_info(self):
-        # Renvoie list de joueurs que le controlleur mets dans la DB
+        """
+        Input from the user to manually create players for a tournament.
+
+        Return:
+            List of players.
+        """
 
         players = []
         player_first_name = str(input("Enter the player's first name: "))
@@ -161,6 +129,10 @@ class View:
         return players
 
     def display_all_players(self, players):
+        """
+        Display all players from a tournament in the report menu.
+        """
+
         print("\nList of every players competing:")
         for player in players:
             print(
@@ -169,6 +141,10 @@ class View:
             )
 
     def display_all_tournaments(self, tournaments):
+        """
+        Display all tournaments in the report menu.
+        """
+
         print("\nList of every tournaments:")
         # Utiliser l'ID de la table
         for tourneys in tournaments:
@@ -178,6 +154,10 @@ class View:
             )
 
     def display_players_by_tournaments(self, tournaments):
+        """
+        Display the participants of each tournament in the report menu.
+        """
+
         print(repr(tournaments))
         for tourneys in tournaments:
             print("=================================================\n")
@@ -189,9 +169,11 @@ class View:
     def first_pairs(self, players):
         """
         Display the pairing matchs for the first round.
+
         Param:
             player (list) every Player object
         """
+
         # x = second half of players, pairing first half index versus second half index player.
         x = 4
         for i in range(4):
@@ -202,10 +184,11 @@ class View:
     def next_pairs(self, players):
         """
         Display the pairing matchs for the next rounds.
+
         Param:
             player (list) of player tuples.
         """
- 
+
         print("\nNext round:")
         i = 0
         for player in players:
@@ -215,14 +198,14 @@ class View:
     def first_round_result(self, player):
         """
         Ask the user to enter the player's score (1, 0 or 0.5).
+
         Param:
             player (list) every Player object
         """
+
         while True:
             player_result = input(
-                (
-                    f"Enter the score for:\n{player.ID}: {player.first_name}: "
-                )
+                (f"Enter the score for:\n{player.ID}: {player.first_name}: ")
             )
             if player_result != "1" and player_result != "0.5" and player_result != "0":
                 print("Invalid input, choose between 1, 0.5 or 0.")
@@ -236,31 +219,60 @@ class View:
         Param:
             player (Player object)
         """
+
         while True:
-            player_result = input(
-                (f"Enter the score for:\n{player}: ")
-            )
+            player_result = input((f"Enter the score for:\n{player}: "))
             if player_result != "1" and player_result != "0.5" and player_result != "0":
                 print("Invalid input, choose between 1, 0.5 or 0.")
             else:
                 return float(player_result)
 
+    def update_ranks(self, players):
+        """
+        Update the ranking attribute from the players.
+
+        Param:
+            players (Player objects)
+        Return:
+            update (float) input from the user
+        """
+
+        update = float(
+            input(f"Update rank for: {players.first_name}, rank: {players.ranking}\t+ ")
+        )
+
+        return update
+
+    def confirm_update(self, players):
+        """
+        Confirm the ranking update.
+
+        Param:
+            players (Player objects)
+        """
+
+        print(f"New player's rank -> {players.ranking}")
+
     def display_tournament_info(self, tournament):
         """
         Display tournament name, location, date and number of rounds.
         NEED TO ADD FORMAT (blitz, bullet...).
+
         Param:
             tournament (Tourney object)
         """
+
         print(f"\nThe '{tournament.name}' tournament has started !")
         print(f"Number of rounds: {tournament.number_of_rounds}\n")
-    
+
     def display_players_ranks(self, players):
         """
         Enumerates each players sorted by their ranks.
+
         Param:
             players (list) every players
         """
+
         print("Participants:")
         for player in enumerate(players, 1):
             print(player)
@@ -269,19 +281,29 @@ class View:
     def display_round_result(self, rounds):
         """
         Display the scores from each players.
+
         Param:
             rounds (dicts) every matchs
         """
+
         print("\nRounds result:")
-        print(str(rounds).replace("{", "").replace("}", "").replace("'", "").replace(",", " -"))
+        print(
+            str(rounds)
+            .replace("{", "")
+            .replace("}", "")
+            .replace("'", "")
+            .replace(",", " -")
+        )
         print()
 
     def display_tournament_ranking(self, global_ranking):
         """
         Display each player's results from the tournament, sorted by scores and ranks
+
         Param:
             global_ranking (List of tuples) Player, scores and ranks
         """
+
         print("\nTournament ranking:")
         for player in enumerate(global_ranking, 1):
             print(player)
@@ -290,19 +312,26 @@ class View:
     def display_tournament_over(self, tournament):
         """
         Display that the tournament is over if the user tries to load the previous tournament from the main menu.
+
         Param:
             tournament (Tourney object)
         """
-        print(f"\n{tournament.name} - Rounds: {tournament.current_round}/{tournament.number_of_rounds}\
+
+        print(
+            f"\n{tournament.name} - Rounds: {tournament.current_round}/{tournament.number_of_rounds}\
                 \nThis tournament is over !\n"
-             )
+        )
 
     def ask_to_load(self, tournament):
         """
         Display the tournament informations and ask the user to load it.
         """
+
         print("\nTournament info:")
-        print(f"{tournament.name} - Location: {tournament.location} - Started: {tournament.date} - Rounds: {tournament.current_round}/{tournament.number_of_rounds}")
+        print(
+            f"{tournament.name} - Location: {tournament.location} - Started: {tournament.date}\
+ - Rounds: {tournament.current_round}/{tournament.number_of_rounds}"
+        )
         while True:
             ask = input("\nLoad this tournament ? [Y/N] ").upper()
             if ask != "y".upper() and ask != "n".upper():

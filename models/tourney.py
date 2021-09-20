@@ -4,6 +4,7 @@ from models.player import Player
 from models.datadb import db
 import itertools
 
+
 class Tourney:
     """
     Class used to represent a tournament.
@@ -14,6 +15,7 @@ class Tourney:
         date (str)
         number_of_rounds (int) - default value = 4
     """
+
     def __init__(self, name, location, date, number_of_rounds=4):
         self.name = name
         self.location = location
@@ -26,10 +28,14 @@ class Tourney:
         Blitz = 3, 5 or 10 minutes per player each turn
         Speed chess = 15 to 60 minutes per player
         """
+
         pass
 
     def director_description(self):
-        # Director's feedback
+        """
+        Director's feedback, empty for now.
+        """
+
         pass
 
     def generate_round(self, rounds):
@@ -39,6 +45,7 @@ class Tourney:
         Return:
              List of dict.
         """
+
         round_history = []
         round_1 = {"match_1": {}, "match_2": {}, "match_3": {}, "match_4": {}}
 
@@ -52,11 +59,12 @@ class Tourney:
         """
         Add scores from a round to the previously generated dicts of matchs.
 
-        Param: 
+        Param:
             List of dicts (match results + empty matchs)
-        Return: 
+        Return:
             Dict with matchs results {player: added_score}
         """
+
         score_list = {}
 
         for rnd in scores:
@@ -73,11 +81,12 @@ class Tourney:
         """
         Sort player by scores from a round.
 
-        Param: 
+        Param:
             List of dicts - player: result
-        Return: 
+        Return:
             List of tuples (player, result) sorted by scores.
         """
+
         global_ranking = sorted(scores.items(), key=lambda item: item[1], reverse=True)
 
         return global_ranking
@@ -92,6 +101,7 @@ class Tourney:
         Return:
             List of tuples with (Players, (scores, ranks)) sorted by scores and ranks.
         """
+
         rank_list = dict(rank_list)
         score_list = dict(score_list)
         for key, value in rank_list.items():
@@ -118,13 +128,14 @@ class Tourney:
         Return:
             List of dicts [{"Match_x":{"player_1": score_1, "player_2": score_2}}...]
         """
+
         players = sorted(players_list, key=lambda player: player.ranking, reverse=True)
         first_half = players[0:4]
         second_half = players[4:8]
         pairs(players)
         for i in range(4):
             rounds[0][f"match_{i+1}"] = {
-                first_half[i].first_name:  first_round_result(first_half[i]),
+                first_half[i].first_name: first_round_result(first_half[i]),
                 second_half[i].first_name: first_round_result(second_half[i]),
             }
 
@@ -137,6 +148,7 @@ class Tourney:
         Param:
             split_players (list of tuples) Pairs of players
         """
+
         next_round = {"match_1": {}, "match_2": {}, "match_3": {}, "match_4": {}}
 
         rounds_pairs(split_players)
@@ -149,10 +161,7 @@ class Tourney:
 
         return next_round
 
-
-
     def get_round_result(self, scores):
-        # Tourney
         """Sort each matchs from player's scores.
 
         Param:
@@ -160,6 +169,7 @@ class Tourney:
         Return:
             List of dicts of each matchs sorted by scores.
         """
+
         ranking = {
             **scores["match_1"],
             **scores["match_2"],
@@ -170,14 +180,17 @@ class Tourney:
 
         return sort_matchs
 
-    def change_player_ranking(self, players, rounds, serialize_tournament, ranking):
+    def change_player_ranking(
+        self, players, rounds, ranking, rank_update, confirm_update
+    ):
         """
-        Update the ranking from every player of a tournament.
+        Update the ranking from every player of a tournament and save the changes inside the documented database.
 
         Param:
             players (Player objects) List of every players
             rounds (dict) List of every matchs from every rounds
             serialize_tournament (Tinydb doc) Saved data from the tournament.
+            ranking (View class) display the tournament ranking.
         """
 
         player_ranks = Player.get_player_name_ranking(players)
@@ -186,15 +199,11 @@ class Tourney:
         global_ranking = self.display_global_ranking(player_ranks, sorted_round_result)
         ranking(global_ranking)
         for i in range(len(players)):
-            update_rank = float(
-                input(
-                    f"Update rank for: {players[i].first_name}, rank: {players[i].ranking}\t+ "
-                )
-            )
+            update_rank = rank_update(players[i])
             players[i].ranking += update_rank
-            print(f"New player's rank -> {players[i].ranking}")
+            confirm = confirm_update(players[i])
         convert = Player.convert_to_dict(players)
-        serialize_tournament.update({"all_players": convert})
+        Player.serialize_players(players)
 
         exit()
 
@@ -284,7 +293,10 @@ class Tourney:
         """
         for player_1, player_2 in zip(itertools.repeat(players[0]), players[1:]):
             # Compare if each players already played against each other
-            if (player_1, player_2) not in matchs_played and (player_2, player_1) not in matchs_played:
+            if (player_1, player_2) not in matchs_played and (
+                player_2,
+                player_1,
+            ) not in matchs_played:
                 matchs = (player_1, player_2)
                 # Remove players from the initial list
                 players.remove(player_1)
@@ -297,7 +309,7 @@ class Tourney:
                 except IndexError as msg:
                     msg = "List of players empty"
                 return ["_".join(player) for player in matchs_played[-4:]]
-                    
+
     def get_player_by_id(self, id):
         """
         Get player ids from 'db.json'
@@ -306,8 +318,8 @@ class Tourney:
         Return:
             Player key
         """
-        players_table = db.table('all_players')
-        
+        players_table = db.table("all_players")
+
         return players_table.get(doc_id=id)
 
     def converts_ids(self, rounds):
@@ -318,6 +330,9 @@ class Tourney:
         Return:
             Converted dictionaries with names instead of ids.
         """
-        name_by_id = {self.get_player_by_id(player_id)['name']: score for player_id, score in rounds.items()}
+        name_by_id = {
+            self.get_player_by_id(player_id)["name"]: score
+            for player_id, score in rounds.items()
+        }
 
         return name_by_id
