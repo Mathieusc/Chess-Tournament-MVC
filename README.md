@@ -66,9 +66,6 @@ The main menu will display:
 4 - Add players to the database  
 5 - Report menu
 
-## Known issue
-
-
 
 ## Built With
 
