@@ -40,19 +40,6 @@ class Controller:
             else:
                 print("Invalid input, please try again.")
 
-    def run_format(self):
-        """
-        Match format menu.
-        """
-
-        while True:
-            report = self.view.select_match_format()
-            if report == "1":
-                print("BLITZ BOYZZZZZZ")
-                
-            else:
-                print("Invalit input, please try again.")
-
     def run_report(self):
         """
         Report menu.
