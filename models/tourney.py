@@ -26,6 +26,10 @@ class Tourney:
 
     def time_control(self):
         """
+        Set the match format for the tournament:
+            Bullet (1 to 2 minutes)")
+            Blitz (3, 5 or 10 minutes)")
+            Speed chess (15 to 60 minutes)")
         """
         time_format = ["Blitz", "Bullet", "Speed chess"]
 
