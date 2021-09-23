@@ -2,6 +2,8 @@
 
 from models.player import Player
 from models.datadb import db
+from datetime import datetime, date
+import random
 import itertools
 
 
@@ -16,20 +18,18 @@ class Tourney:
         number_of_rounds (int) - default value = 4
     """
 
-    def __init__(self, name, location, date, number_of_rounds=4):
+    def __init__(self, name, location, date="", number_of_rounds=4):
         self.name = name
         self.location = location
         self.date = date
         self.number_of_rounds = number_of_rounds
 
-    def match_format(self):
+    def time_control(self):
         """
-        Bullet = 1 to 2 minutes per player
-        Blitz = 3, 5 or 10 minutes per player each turn
-        Speed chess = 15 to 60 minutes per player
         """
+        time_format = ["Blitz", "Bullet", "Speed chess"]
 
-        pass
+        return random.choice(time_format)
 
     def director_description(self):
         """
@@ -306,7 +306,7 @@ class Tourney:
                 try:
                     self.pairs_swiss_system(players, matchs_played)
                 except IndexError:
-                    print("List of players empty")
+                    continue
                 return ["_".join(player) for player in matchs_played[-4:]]
 
     def get_player_by_id(self, id):
@@ -335,3 +335,27 @@ class Tourney:
         }
 
         return name_by_id
+
+    def get_current_date(self):
+        """
+        Return:
+            current date (Month/Day/Year)
+        """
+
+        # Textual month, day and year.
+        today = date.today()
+
+        return today.strftime("%B %d, %Y")
+
+    def get_current_time(self):
+        """
+        Return:
+            current time (Hour/Minute/Second)
+        """
+        
+        now = datetime.now()
+        # Hour / Minutes / seconds format.
+        current_time = now.strftime("%H: %M: %S")
+
+        return current_time
+    

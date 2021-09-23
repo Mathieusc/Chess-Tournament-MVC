@@ -61,13 +61,9 @@ class View:
             print("-", end="")
         print("\nReport: ")
         print("[1] Display all players by ranking")
-        print("[2] Display all players in alphabetical order.")
-        print("[3] Display every tournaments.")
-        print("[4] Display players from tournaments (ranking).")
-        print("[5] Display players from tournaments (alphabetical)")
-        print("[6] Display matchs from Round 2")
-        print("[7] Display matchs from Round 3")
-        print("[8] Display matchs from Round 4")
+        print("[2] Display all players in alphabetical order")
+        print("[3] Display every tournaments")
+        print("[4] Display all matchs from every tournaments")
         print("[0] Exit the program.")
         menu = input("Choose your option: ")
 
@@ -110,11 +106,13 @@ class View:
         """
 
         print("\nList of every players competing:")
+        count = 1
         for player in players:
             print(
                 f"{players.index(player)+1}: {player.get('last_name')} {player.get('name')}\
 - ID: {player.get('player_id')} - Rank: {player.get('ranking')}"
             )
+            count += 1
 
     def display_all_tournaments(self, tournaments):
         """
@@ -123,11 +121,36 @@ class View:
 
         print("\nList of every tournaments:")
         # Utiliser l'ID de la table
+        count = 1
         for tourneys in tournaments:
             print(
-                f"{tournaments.index(tourneys)+1}: {tourneys.get('name')} - {tourneys.get('location')}\
+                f"{count}: {tourneys.get('name')} - {tourneys.get('location')}\
 - {tourneys.get('date')} - Rounds: {tourneys.get('current_round')}"
             )
+            count += 1
+
+    def display_all_tournaments_matchs(self, tournaments):
+        """
+        Display all tournaments and every matchs in the report menu.
+        """
+        print("\nList of every tournaments:")
+        # Utiliser l'ID de la table
+        count = 1
+        for tourneys in tournaments:
+            print("-------------------------------------------------\n")
+            print(
+                f"{count}: {tourneys.get('name')} - {tourneys.get('location')}\
+- {tourneys.get('date')} - Rounds: {tourneys.get('current_round')}"
+            )
+            for matchs in tourneys["rounds"]:
+                print(f"Match 1: {matchs['match_1']}")
+                print(f"Match 2: {matchs['match_2']}")
+                print(f"Match 3: {matchs['match_3']}")
+                print(f"Match 4: {matchs['match_4']}")
+                print()
+            count += 1
+            print("-------------------------------------------------\n")
+
 
     def display_players_by_tournaments(self, tournaments):
         """
@@ -136,11 +159,11 @@ class View:
 
         print(repr(tournaments))
         for tourneys in tournaments:
-            print("=================================================\n")
+            print("-------------------------------------------------\n")
             print(f"{tourneys.get('name')}")
             for player in tourneys["all_players"]:
                 print(player["name"])
-            print("=================================================\n")
+            print("-------------------------------------------------\n")
 
     def first_pairs(self, players):
         """
@@ -249,7 +272,7 @@ class View:
             players (list) every players
         """
 
-        print("Participants:")
+        print("\nParticipants:")
         for player in enumerate(players, 1):
             print(player)
         print("\nInitializing the first round...")
@@ -316,3 +339,15 @@ class View:
                 break
             elif ask == "n".upper():
                 exit()
+
+    def select_match_format(self):
+        """
+        Select the match format for the tournament.
+        """
+
+        print("Time control:")
+        print("[1] Bullet (1 to 2 minutes)")
+        print("[2] Blitz (3, 5 or 10 minutes)")
+        print("[3] Speed chess (15 to 60 minutes)")
+
+        return input("Select the tournament format: ")

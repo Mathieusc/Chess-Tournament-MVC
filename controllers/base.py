@@ -40,6 +40,19 @@ class Controller:
             else:
                 print("Invalid input, please try again.")
 
+    def run_format(self):
+        """
+        Match format menu.
+        """
+
+        while True:
+            report = self.view.select_match_format()
+            if report == "1":
+                print("BLITZ BOYZZZZZZ")
+                
+            else:
+                print("Invalit input, please try again.")
+
     def run_report(self):
         """
         Report menu.
@@ -68,22 +81,7 @@ class Controller:
                 continue
             if main_menu == "4":
                 tournaments = data.get_tournament()
-                self.view.display_players_by_tournaments(tournaments)
-                continue
-            if main_menu == "5":
-                tournaments = data.get_tournaments_players()
-                continue
-            if main_menu == "6":
-                Data.display_matchs_2()
-                continue
-            if main_menu == "7":
-                Data.display_matchs_3()
-                continue
-            if main_menu == "8":
-                Data.display_matchs_4()
-                continue
-            if main_menu == "9":
-                Data.main_table()
+                self.view.display_all_tournaments_matchs(tournaments)
                 continue
             if main_menu == "0":
                 break
@@ -130,9 +128,6 @@ class Controller:
         players = Player.deserialize_players(player_table)
         # Global ranking data
         player_ranks = Player.get_player_name_ranking(players)
-        print("player ranks object")
-        print(player_ranks)
-        print(type(player_ranks))
         get_round_result = tournament.add_scores(rounds)
         sorted_round_result = tournament.sort_scores(get_round_result)
         global_ranking = tournament.display_global_ranking(
@@ -150,10 +145,14 @@ class Controller:
         """
 
         # Tournament
-        tournament = Tourney("Grand Chess Tour", "London", "November 06, 2021")
+        tournament = Tourney("Grand Chess Tour", "London")
+        current_date = tournament.get_current_date()
+        tournament.date = current_date
         tournament.current_round = 1
+        tournament.match_format = tournament.time_control()
         serialize_tournament = tournament.serialize_tournament(tournament)
         self.view.display_tournament_info(tournament)
+        round_started = tournament.get_current_time()
 
         # To manually create players:
         # players = self.view.prompt_players()
@@ -174,10 +173,12 @@ class Controller:
             player_ranks, sorted_round_result
         )
         self.view.display_tournament_ranking(global_ranking)
+        # Add the date + hour for that round in the list here
+        round_ended = tournament.get_current_time()
 
         # TinyDB (save tournament data)
         serialize_tournament.update(
-            {"rounds": rounds}, doc_ids=[len(serialize_tournament)]
+            {"rounds":(rounds)}, doc_ids=[len(serialize_tournament),]
         )
 
         self.view.ask_continue()

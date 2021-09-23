@@ -61,7 +61,7 @@ class Player:
 
         players_list = []
         players_table = db.table("all_players")
-        players_table.truncate()  # Clear the table first
+        #players_table.truncate()  # Clear the table first
         for players in player:
             serializerd_player = {
                 "name": players.first_name,
