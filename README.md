@@ -1,5 +1,5 @@
 # Openclassrooms Project 4
-
+![Chess club](https://user.oc-static.com/upload/2020/09/22/16007793690358_chess%20club-01.png)  
 Chess tournament manager using the swiss system (non-eleminatory).  
 Python program using the MVC pattern and object oriented paradigm.  
 First version of the program.
