@@ -61,7 +61,7 @@ python main.py
 ```
 
 The main menu will display:  
-1 - Create a new tournament (The program currently auto-generates 8 players and creates a tournament)  
+1 - Create a new tournament (The program currently auto-generate 8 players and creates a tournament)  
 2 - Load (if any) the previous tournament  
 3 - Update the player's ranking  
 4 - Add players to the database  
