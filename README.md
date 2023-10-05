@@ -30,21 +30,22 @@ Go to the directory of the project from a terminal.
 (or shift right click from the project directory, open terminal)
 
 ```
-git clone https://github.com/Mathieusc/Openclassrooms_project_4
-cd path_of_folder\Openclassrooms_project_4
+git clone https://github.com/Mathieusc/Chess-Tournament-MVC
 ```
-
 Create and activate the virtual environment on Linux:
 ```
 python -m venv env
+```
+```
 source env/bin/activate
 ```
 On Windows:
 ```
 python -m venv env
+```
+```
 .\env\Scripts\Activate
 ```
-
 Install the modules used for the project:
 
 ```
@@ -60,7 +61,7 @@ python main.py
 ```
 
 The main menu will display:  
-1 - Create a new tournament  
+1 - Create a new tournament (The program currently auto-generates 8 players and creates a tournament)  
 2 - Load (if any) the previous tournament  
 3 - Update the player's ranking  
 4 - Add players to the database  
